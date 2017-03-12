@@ -1,7 +1,7 @@
 # project_explorer
 
 ## Keyboard Shortcuts
-**Important Note:** The Delete action deletes the selected files/folders immediately without confirmation or sending to trash!
+**Important Note:** The "Delete" action deletes the selected files/folders immediately without confirmation or sending to trash!
 
 | Action | Keys                                              |
 | ------ | ------------------------------------------------- |
