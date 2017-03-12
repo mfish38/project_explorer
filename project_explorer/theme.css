@@ -1,0 +1,95 @@
+/* See http://doc.qt.io/qt-5/stylesheet-reference.html */
+
+QToolButton {
+    border: none;
+}
+
+QToolBar {
+    border: none;
+}
+
+ProjectTabs {
+    background: #999999;
+}
+
+ProjectTabBar QToolBar QToolButton:hover {
+    background: #999999;
+}
+
+ProjectTabBar QToolBar QToolButton#new_tab {
+    qproperty-icon: url(icons/material-design-icons/action/drawable-xxxhdpi/ic_tab_black_48dp.png);
+}
+
+/* Hide tab tear indicator. */
+ProjectTabBar QTabBar::tear {
+    width: 0px; 
+    border: none;
+}
+
+ProjectTabBar {
+    background-color: #666666;
+    padding-left: 0px;
+    padding-right: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+ProjectTabBar QTabBar::tab {
+    border: 2px solid #666666;
+    border-left: none;
+    padding: 5px;
+    background: #7D7D7D;
+}
+
+ProjectTabBar QTabBar::tab:selected {
+    background: #999999;
+}
+
+ProjectTabBar QTabBar::tab:hover {
+    background: #999999;
+}
+
+ProjectTabBar QTabBar::close-button { 
+    image: url(icons/material-design-icons/navigation/drawable-xxxhdpi/ic_close_black_48dp.png);
+}
+
+ProjectTabBar QTabBar::close-button:hover {
+    background: #777777;
+}
+
+Project {
+    background-color: #999999;
+}
+    
+Project QSplitter::handle {
+    background-color: #999999;
+}
+
+Project QToolBar QToolButton:hover {
+    background: #777777;
+}
+
+Project QToolBar QToolButton#add_root {
+    qproperty-icon: url(icons/material-design-icons/av/drawable-xxxhdpi/ic_playlist_add_black_48dp.png);
+}
+
+Project QToolBar QToolButton#open_trash {
+    qproperty-icon: url(icons/material-design-icons/action/drawable-xxxhdpi/ic_delete_black_48dp.png);
+}
+
+RootWidget QTreeView {
+    background: #777777;
+    selection-background-color: #999999;
+}
+
+RootWidget QToolBar QToolButton#new_file {
+    qproperty-icon: url(icons/material-design-icons/action/drawable-xxxhdpi/ic_note_add_black_48dp.png);
+}
+
+RootWidget QToolBar QToolButton#new_directory {
+    qproperty-icon: url(icons/material-design-icons/file/drawable-xxxhdpi/ic_create_new_folder_black_48dp.png);
+}
+
+RootWidget QToolBar QToolButton#close_root {
+    qproperty-icon: url(icons/material-design-icons/navigation/drawable-xxxhdpi/ic_close_black_48dp.png);
+}
