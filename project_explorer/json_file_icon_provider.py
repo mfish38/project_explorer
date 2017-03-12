@@ -1,4 +1,7 @@
 '''
+Copyright (c) 2017 Mark Fisher
+Licensed under the MIT License, see LICENSE in the project root for full license.
+
 This module contains an icon provider for use with a QFileSystemModel, where the icons are specified
 using a JSON settings file.
 

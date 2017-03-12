@@ -1,4 +1,7 @@
 '''
+Copyright (c) 2017 Mark Fisher
+Licensed under the MIT License, see LICENSE in the project root for full license.
+
 A project based file explorer.
 '''
 
