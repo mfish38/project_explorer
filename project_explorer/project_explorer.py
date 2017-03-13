@@ -634,6 +634,8 @@ class ProjectExplorer(QFrame):
     def __init__(self):
         super(ProjectExplorer, self).__init__()
         
+        self.setWindowTitle('ProjectExplorer')
+        
         self._tab_widget = ExtendedTabWidget()
         self._tab_bar = ProjectTabBar()
         self._tab_bar.setShape(ProjectTabBar.RoundedEast)
