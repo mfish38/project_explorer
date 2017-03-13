@@ -625,12 +625,14 @@ class ProjectTabBar(ExtendedTabBar):
         self.floating_toolbar.widgetForAction(new_tab_action).setObjectName('new_tab')
         new_tab_action.triggered.connect(self.new_tab_requested.emit)
     
-class ProjectTabs(QFrame):
+class ProjectExplorer(QFrame):
     '''
-    Tab contents showing different projects as different project tabs are selected.
+    A project explorer with tabs.
+    
+    Tab contents show different projects as different project tabs are selected.
     '''
     def __init__(self):
-        super(ProjectTabs, self).__init__()
+        super(ProjectExplorer, self).__init__()
         
         self._tab_widget = ExtendedTabWidget()
         self._tab_bar = ProjectTabBar()
@@ -678,17 +680,17 @@ def main():
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(AppUserModelID)
 
     application = QApplication(sys.argv)
-
+    
     # Load and apply the theme.
     with open('theme.css') as theme:
         style_sheet = theme.read()
     application.setStyleSheet(style_sheet)
     
     # Create and show the main window.
-    main_window = ProjectTabs()
+    main_window = ProjectExplorer()
     main_window.resize(500, 1000)
     main_window.show()
-
+    
     # Enter the event loop.
     application.exec_()
 
