@@ -11,6 +11,7 @@ import shutil
 import datetime
 import glob
 import itertools
+import ctypes
 
 from PySide.QtCore import Signal, QModelIndex, Qt, QDir, QEvent
 from PySide.QtGui import (
@@ -671,6 +672,11 @@ class ProjectTabs(QFrame):
         self._tab_bar.setCurrentIndex(index)
         
 def main():
+    # Set the AppUserModelID so that the window is not grouped with other python programs in the
+    # taskbar.
+    AppUserModelID = u'ProjectExplorer.ProjectExplorer'
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(AppUserModelID)
+
     application = QApplication(sys.argv)
 
     # Load and apply the theme.
