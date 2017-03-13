@@ -98,3 +98,7 @@ RootWidget QToolBar QToolButton#new_directory {
 RootWidget QToolBar QToolButton#close_root {
     qproperty-icon: url(icons/material-design-icons/navigation/drawable-xxxhdpi/ic_close_black_48dp.png);
 }
+
+ProjectExplorer {
+    qproperty-windowIcon: url(icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_48dp.png);
+}
