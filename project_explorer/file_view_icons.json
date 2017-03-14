@@ -1,34 +1,38 @@
 {
+    "fonts_to_load" : [
+        "icons/material-design-icons/iconfont/MaterialIcons-Regular.ttf"
+    ],
+
     "types" : {
-        "Computer" : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_48dp.png",
-        "Desktop"  : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_48dp.png",
-        "Trashcan" : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_48dp.png",
-        "Network"  : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_48dp.png",
-        "Drive"    : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_48dp.png",
-        "Folder"   : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_48dp.png",
+        "Computer" : ["Material Icons", "folder"],
+        "Desktop"  : ["Material Icons", "folder"],
+        "Trashcan" : ["Material Icons", "folder"],
+        "Network"  : ["Material Icons", "folder"],
+        "Drive"    : ["Material Icons", "folder"],
+        "Folder"   : ["Material Icons", "folder"],
         "File"     : null
     },
 
-    "extensions" : {
-        "png" : "icons/material-design-icons/image/drawable-xxxhdpi/ic_photo_black_48dp.png",
-        "svg" : "icons/material-design-icons/image/drawable-xxxhdpi/ic_photo_black_48dp.png",
-        "xcf" : "icons/material-design-icons/image/drawable-xxxhdpi/ic_photo_black_48dp.png",
-        "jpg" : "icons/material-design-icons/image/drawable-xxxhdpi/ic_photo_black_48dp.png",
+    "patterns" : {
+        "*.png" : "icons/material-design-icons/image/drawable-xxxhdpi/ic_photo_black_48dp.png",
+        "*.svg" : "icons/material-design-icons/image/drawable-xxxhdpi/ic_photo_black_48dp.png",
+        "*.xcf" : "icons/material-design-icons/image/drawable-xxxhdpi/ic_photo_black_48dp.png",
+        "*.jpg" : "icons/material-design-icons/image/drawable-xxxhdpi/ic_photo_black_48dp.png",
 
-        "md"        : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "txt"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "cfg"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "log"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "py"        : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "mkd"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "html"      : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "css"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "xml"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "js"        : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "json"      : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.md"        : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.txt"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.cfg"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.log"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.py"        : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.mkd"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.html"      : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.css"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.xml"       : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.js"        : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        "*.json"      : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
 
-        "gitignore"     : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
-        "gitattributes" : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png"
+        ".gitignore"     : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png",
+        ".gitattributes" : "icons/material-design-icons/editor/drawable-xxxhdpi/ic_format_align_left_black_48dp.png"
     },
 
     "file_default" : "icons/null.png"
