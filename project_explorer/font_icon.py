@@ -21,7 +21,8 @@ class _FontIconEngine(QIconEngine):
                 The font to use.
                 
             - text
-                The text from the font to draw. This should specify only one icon from the font.
+                The text from the font to draw. This can be either a ligature, or a hex value
+                escaped like so: "\uFFFF" 
         '''
         super(_FontIconEngine, self).__init__()
         
@@ -72,7 +73,8 @@ class FontIcon(QIcon):
                 The font to use.
                 
             - text
-                The text from the font to draw. This should specify only one icon from the font.
+                The text from the font to draw. This can be either a ligature, or a hex value
+                escaped like so: "\uFFFF" 
         '''
         engine = _FontIconEngine(font, text)
         

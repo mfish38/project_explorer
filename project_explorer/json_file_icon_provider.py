@@ -33,7 +33,8 @@ The format of the JSON file should be:
 
 Note that null can be given for any path to not specify an icon. In all cases, either an icon path
 can be given, or a font family and icon text. All font families must be system fonts, or in a font
-loaded with "fonts_to_load".
+loaded with "fonts_to_load". The icon text can be either a ligature or a hex value escaped like:
+"\uFFFF".
 '''
 
 import os
