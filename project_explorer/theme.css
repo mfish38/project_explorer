@@ -87,6 +87,22 @@ RootWidget QTreeView {
     selection-background-color: #999999;
 }
 
+RootWidget QTreeView::branch:open:hover {
+    background: #999999;
+}
+
+RootWidget QTreeView::branch:closed:has-children:hover {
+    background: #999999;
+}
+
+RootWidget QTreeView::branch:open {
+    image: url(icons/material-design-icons/hardware/drawable-xxxhdpi/ic_keyboard_arrow_down_black_48dp.png);
+}
+
+RootWidget QTreeView::branch:closed:has-children {
+    image: url(icons/material-design-icons/hardware/drawable-xxxhdpi/ic_keyboard_arrow_right_black_48dp.png);
+}
+
 RootWidget QToolBar QToolButton#new_file {
     qproperty-icon: url(icons/material-design-icons/action/drawable-xxxhdpi/ic_note_add_black_48dp.png);
 }
