@@ -27,6 +27,7 @@ from PySide.QtGui import (
     QFileSystemModel,
     QTreeView,
     QToolBar,
+    QMessageBox,
 )
 
 from extended_tabs import ExtendedTabBar, ExtendedTabWidget
@@ -401,7 +402,7 @@ class RootWidget(QFrame):
         Handle short cuts key presses.
         '''
         if event.key() == Qt.Key_Delete:
-            if QApplication.keyboardModifiers() == (Qt.ControlModifier | Qt.ShiftModifier):
+            if QApplication.keyboardModifiers() == Qt.ShiftModifier:               
                 self._delete_selected()
             else:
                 self._trash_selected()
@@ -471,6 +472,15 @@ class RootWidget(QFrame):
         '''
         Deletes all of the currently selected items.
         '''
+        selection = QMessageBox.warning(
+            self,
+            'Delete',
+            'Permanently delete selected items?',
+            (QMessageBox.Yes | QMessageBox.No))
+        
+        if selection != QMessageBox.Yes:
+            return
+        
         for index in self._view.selectedIndexes():
             self._model.remove(index)
     
