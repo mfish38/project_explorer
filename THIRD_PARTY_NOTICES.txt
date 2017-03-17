@@ -9,7 +9,6 @@ Files: project_explorer/icons/a-file-icon
 From: https://github.com/ihodev/a-file-icon/
 
 Modifications:
-    - Added/updated .gitignore files.
     - Removed unused files/icons to reduce size.
 
 License:
@@ -48,7 +47,6 @@ Files: project_explorer/icons/material-design-icons
 From: https://github.com/google/material-design-icons/
 
 Modifications:
-    - Added/updated .gitignore files.
     - Removed unused files/icons to reduce size.
 
 License:
