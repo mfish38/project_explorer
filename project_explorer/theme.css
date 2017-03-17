@@ -83,7 +83,7 @@ Project QToolBar QToolButton#open_trash {
 }
 
 RootWidget QTreeView {
-    background: #777777;
+    background: #555555;
     selection-background-color: #999999;
 }
 
