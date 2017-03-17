@@ -35,9 +35,12 @@ Note that null can be given for any path to not specify an icon. In all cases, e
 can be given, or a font family and icon text. All font families must be system fonts, or in a font
 loaded with "fonts_to_load". The icon text can be either a ligature or a hex value escaped like:
 "\uFFFF".
+
+Comments of the // form are allowed.
 '''
 
 import os
+import re
 import json
 from fnmatch import fnmatch
 
@@ -45,6 +48,8 @@ from PySide.QtCore import QFileInfo
 from PySide.QtGui import QFileIconProvider, QIcon, QFontDatabase, QFont
 
 from font_icon import FontIcon
+
+_COMMENT_REGEX = re.compile(r'//.*$', flags=re.MULTILINE)
 
 class JSONFileIconProvider(QFileIconProvider):
     '''
@@ -58,7 +63,12 @@ class JSONFileIconProvider(QFileIconProvider):
         super(JSONFileIconProvider, self).__init__()
         
         with open(path) as json_file:
-            settings = json.load(json_file)
+            json_text = json_file.read()
+        
+        # Remove comments
+        json_text = _COMMENT_REGEX.sub('', json_text)
+        
+        settings = json.loads(json_text)
         
         # Get the font families to load.
         fonts_to_load = settings['fonts_to_load']
