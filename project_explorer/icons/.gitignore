@@ -17,4 +17,10 @@
 !/material-design-icons/file/drawable-xxxhdpi/ic_create_new_folder_black_18dp.png
 !/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png
 
+!/a-file-icon/LICENSE.md
+!/a-file-icon/README.md
+!/a-file-icon/package.json
+!/a-file-icon/icons/multi/*
+/a-file-icon/icons/multi/*x.png
+
 !*/

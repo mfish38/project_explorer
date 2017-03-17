@@ -1,39 +1,193 @@
 {
     "fonts_to_load" : [
-        "icons/material-design-icons/iconfont/MaterialIcons-Regular.ttf"
     ],
 
     "types" : {
-        "Computer" : ["Material Icons", "folder"],
-        "Desktop"  : ["Material Icons", "folder"],
-        "Trashcan" : ["Material Icons", "folder"],
-        "Network"  : ["Material Icons", "folder"],
-        "Drive"    : ["Material Icons", "folder"],
-        "Folder"   : ["Material Icons", "folder"],
+        "Computer" : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
+        "Desktop"  : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
+        "Trashcan" : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
+        "Network"  : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
+        "Drive"    : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
+        "Folder"   : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
         "File"     : null
     },
 
     "patterns" : {
-        "*.png" : ["Material Icons", "photo"],
-        "*.svg" : ["Material Icons", "photo"],
-        "*.xcf" : ["Material Icons", "photo"],
-        "*.jpg" : ["Material Icons", "photo"],
+        "*.accdb" : "icons/a-file-icon/icons/multi/file_type_access.png",
 
-        "*.md"        : ["Material Icons", "format_align_left"],
-        "*.txt"       : ["Material Icons", "format_align_left"],
-        "*.cfg"       : ["Material Icons", "format_align_left"],
-        "*.log"       : ["Material Icons", "format_align_left"],
-        "*.py"        : ["Material Icons", "format_align_left"],
-        "*.mkd"       : ["Material Icons", "format_align_left"],
-        "*.html"      : ["Material Icons", "format_align_left"],
-        "*.css"       : ["Material Icons", "format_align_left"],
-        "*.xml"       : ["Material Icons", "format_align_left"],
-        "*.js"        : ["Material Icons", "format_align_left"],
-        "*.json"      : ["Material Icons", "format_align_left"],
+        // "*." : "icons/a-file-icon/icons/multi/file_type_actionscript.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_ae.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_ai.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_angular.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_applescript.png",
 
-        ".gitignore"     : ["Material Icons", "format_align_left"],
-        ".gitattributes" : ["Material Icons", "format_align_left"]
+        "*.zip" : "icons/a-file-icon/icons/multi/file_type_archive.png",
+
+        "*.mp3" : "icons/a-file-icon/icons/multi/file_type_audio.png",
+        "*.flac" : "icons/a-file-icon/icons/multi/file_type_audio.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_babel.png",
+
+        "*.exe" : "icons/a-file-icon/icons/multi/file_type_binary.png",
+        "*.dll" : "icons/a-file-icon/icons/multi/file_type_binary.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_blade.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_bower.png",
+
+        "*.c" : "icons/a-file-icon/icons/multi/file_type_c.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_cf.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_circleci.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_clojure.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_coffeescript.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_composer.png",
+
+        "*.cpp" : "icons/a-file-icon/icons/multi/file_type_cpp.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_csharp.png",
+
+        "*.css" : "icons/a-file-icon/icons/multi/file_type_css.png",
+
+        "*.csv" : "icons/a-file-icon/icons/multi/file_type_csv.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_dlang.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_docker.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_dotnet.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_editorconfig.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_elm.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_erlang.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_eslint.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_ex.png",
+
+        "*.xls" : "icons/a-file-icon/icons/multi/file_type_excel.png",
+        "*.xlsx" : "icons/a-file-icon/icons/multi/file_type_excel.png",
+        "*.xlsm" : "icons/a-file-icon/icons/multi/file_type_excel.png",
+        "*.xlsb" : "icons/a-file-icon/icons/multi/file_type_excel.png",
+
+        "*.ttf" : "icons/a-file-icon/icons/multi/file_type_font.png",
+
+        ".gitignore" : "icons/a-file-icon/icons/multi/file_type_git.png",
+        ".gitattributes" : "icons/a-file-icon/icons/multi/file_type_git.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_go.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_gradle.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_graphviz.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_groovy.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_gruntfile.png",
+
+        //"gulpfile.js" : "icons/a-file-icon/icons/multi/file_type_gulpfile.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_haml.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_haskell.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_haxe.png",
+
+        "*.html" : "icons/a-file-icon/icons/multi/file_type_html.png",
+
+        "*.png" : "icons/a-file-icon/icons/multi/file_type_image.png",
+        "*.jpg" : "icons/a-file-icon/icons/multi/file_type_image.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_indesign.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_java.png",
+
+        "*.js" : "icons/a-file-icon/icons/multi/file_type_js.png",
+
+        "*.json" : "icons/a-file-icon/icons/multi/file_type_json.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_jsp.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_jsx.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_julia.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_less.png",
+
+        "LICENSE" : "icons/a-file-icon/icons/multi/file_type_license.png",
+        // "LICENSE.md" : "icons/a-file-icon/icons/multi/file_type_license.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_liquid.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_lisp.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_lock.png",
+
+        "*.log" : "icons/a-file-icon/icons/multi/file_type_log.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_lsl.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_lua.png",
+
+        "*.md" : "icons/a-file-icon/icons/multi/file_type_markdown.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_markup.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_matlab.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_maya.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_mustache.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_nginx.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_nodejs.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_note.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_npm.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_nsis.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_ocaml.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_onenote.png",
+
+        "*.pdf" : "icons/a-file-icon/icons/multi/file_type_pdf.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_perl.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_php.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_plist.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_postcss.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_powerpoint.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_preferences.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_premiere.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_procfile.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_psd.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_pug.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_puppet.png",
+
+        "*.py" : "icons/a-file-icon/icons/multi/file_type_python.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_r.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_rails.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_riot.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_ruby.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_rust.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_sass.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_scala.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_scss.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_settings.png",
+
+        "*.bat" : "icons/a-file-icon/icons/multi/file_type_shell.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_sketch.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_slim.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_source.png",
+
+        "*.sql" : "icons/a-file-icon/icons/multi/file_type_sql.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_stata.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_stylelint.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_stylus.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_sublime.png",
+
+        "*.svg" : "icons/a-file-icon/icons/multi/file_type_svg.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_swift.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_tcl.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_tex.png",
+
+        "*.txt" : "icons/a-file-icon/icons/multi/file_type_text.png",
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_textile.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_todo.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_twig.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_typescript.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_video.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_vim.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_vue.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_webpack.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_windows.png",
+
+        "*.doc" : "icons/a-file-icon/icons/multi/file_type_word.png",
+        "*.docx" : "icons/a-file-icon/icons/multi/file_type_word.png"
+
+        // "*." : "icons/a-file-icon/icons/multi/file_type_yaml.png",
+        // "*." : "icons/a-file-icon/icons/multi/file_type_yarn.png"
     },
 
-    "file_default" : "icons/null.png"
+    "file_default" : "icons/a-file-icon/icons/multi/file_type_default.png"
 }
+
