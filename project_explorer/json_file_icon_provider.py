@@ -22,9 +22,15 @@ The format of the JSON file should be:
         "File"     : "<icon path>"
     },
     
-    "patterns" : {
-        "*.txt" : ["<FontFamily>", "<icon text>"],
-        "*.jpg" : "<icon path>",
+    "filenames" : {
+        "LICENSE" : ["<FontFamily>", "<icon text>"],
+        "README.md" : "<icon path>",
+        <etc...>
+    },
+    
+    "extensions" : {
+        "txt" : ["<FontFamily>", "<icon text>"],
+        "jpg" : "<icon path>",
         <etc...>
     },
     
@@ -37,6 +43,8 @@ loaded with "fonts_to_load". The icon text can be either a ligature or a hex val
 "\uFFFF".
 
 Comments of the // form are allowed.
+
+Filenames settings override extension settings.
 '''
 
 import os
@@ -127,9 +135,13 @@ class JSONFileIconProvider(QFileIconProvider):
         for type_name, icon_specifier in settings['types'].iteritems():
             self._type_icons[type_map[type_name]] = load_icon(icon_specifier)        
             
-        self._pattern_icons = {}
-        for pattern, icon_specifier in settings['patterns'].iteritems():
-            self._pattern_icons[pattern] = load_icon(icon_specifier)
+        self._filename_icons = {}
+        for filename, icon_specifier in settings['filenames'].iteritems():
+            self._filename_icons[filename] = load_icon(icon_specifier)      
+            
+        self._extension_icons = {}
+        for extension, icon_specifier in settings['extensions'].iteritems():
+            self._extension_icons[extension] = load_icon(icon_specifier)
         
         self._file_default_icon = load_icon(settings['file_default'])
     
@@ -143,9 +155,15 @@ class JSONFileIconProvider(QFileIconProvider):
         if isinstance(type_or_info, QFileInfo):
             # called icon(info)           
             if type_or_info.isFile():
-                for pattern, icon in self._pattern_icons.iteritems():
-                    if fnmatch(type_or_info.fileName(), pattern):
-                        return icon
+                try:
+                    return self._filename_icons[type_or_info.fileName()]
+                except KeyError:
+                    pass
+            
+                try:
+                    return self._extension_icons[type_or_info.suffix()]
+                except KeyError:
+                    pass
                     
                 return self._file_default_icon
 
