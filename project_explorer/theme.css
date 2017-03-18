@@ -83,8 +83,19 @@ Project QToolBar QToolButton#open_trash {
 }
 
 RootWidget QTreeView {
+    background: #333333;
+}
+
+RootWidget QTreeView::item {
+    color: #BBBBBB;
+}
+
+RootWidget QTreeView::item:hover {
+    background: #444444;
+}
+
+RootWidget QTreeView::item:selected {
     background: #555555;
-    selection-background-color: #999999;
 }
 
 RootWidget QTreeView::branch:open:hover {

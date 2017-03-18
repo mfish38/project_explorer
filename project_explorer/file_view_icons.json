@@ -3,12 +3,12 @@
     ],
 
     "types" : {
-        "Computer" : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
-        "Desktop"  : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
-        "Trashcan" : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
-        "Network"  : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
-        "Drive"    : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
-        "Folder"   : "icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png",
+        "Computer" : null,
+        "Desktop"  : null,
+        "Trashcan" : null,
+        "Network"  : null,
+        "Drive"    : null,
+        "Folder"   : null,
         "File"     : null
     },
 
