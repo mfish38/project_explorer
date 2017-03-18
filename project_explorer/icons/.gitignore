@@ -21,6 +21,6 @@
 !/a-file-icon/README.md
 !/a-file-icon/package.json
 !/a-file-icon/icons/multi/*
-/a-file-icon/icons/multi/*x.png
+/a-file-icon/icons/multi/*@?x.png
 
 !*/

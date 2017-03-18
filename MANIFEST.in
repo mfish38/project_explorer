@@ -31,5 +31,5 @@ include \
     project_explorer/icons/a-file-icon/icons/multi/*
 
 exclude \
-    project_explorer/icons/a-file-icon/icons/multi/*x.png
+    project_explorer/icons/a-file-icon/icons/multi/*@?x.png
     
