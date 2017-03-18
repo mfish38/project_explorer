@@ -17,7 +17,7 @@ from PySide.QtCore import Signal, QModelIndex, Qt, QDir, QEvent
 from PySide.QtGui import (
     QLineEdit,
     QSortFilterProxyModel,
-    QItemDelegate,
+    QStyledItemDelegate,
     QFrame,
     QApplication,
     QAction,
@@ -299,7 +299,7 @@ class SortedFileSystemProxyModel(QSortFilterProxyModel):
         else:
             return False
 
-class _EditableItemDelegate(QItemDelegate):
+class _EditableItemDelegate(QStyledItemDelegate):
     '''
     An item delegate that is editable, and emits a signal when editing is finished.
     '''
