@@ -13,10 +13,6 @@ QToolBar {
     border: none;
 }
 
-ProjectTabs {
-    background: #999999;
-}
-
 ProjectTabBar QToolBar QToolButton:hover {
     background: #999999;
 }
@@ -127,5 +123,6 @@ RootWidget QToolBar QToolButton#close_root {
 }
 
 ProjectExplorer {
+    background: #999999;
     qproperty-windowIcon: url(icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png);
 }
