@@ -99,11 +99,11 @@ RootWidget QTreeView::item:selected {
 }
 
 RootWidget QTreeView::branch:open:hover {
-    background: #999999;
+    background: #444444;
 }
 
 RootWidget QTreeView::branch:closed:has-children:hover {
-    background: #999999;
+    background: #444444;
 }
 
 RootWidget QTreeView::branch:open {
