@@ -33,7 +33,9 @@ from PySide.QtGui import (
 from extended_tabs import ExtendedTabBar, ExtendedTabWidget
 from json_file_icon_provider import JSONFileIconProvider
 
-TRASH_DIRECTORY = '.trash'
+SELF_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
+
+TRASH_DIRECTORY = os.path.join(SELF_DIRECTORY, '.trash')
 
 def _valid_split(path):
     '''
@@ -322,7 +324,9 @@ class RootWidget(QFrame):
         model = QFileSystemModel()
         model.setRootPath('This PC')
         model.setReadOnly(False)
-        model.setIconProvider(JSONFileIconProvider('file_view_icons.json'))
+        model.setIconProvider(
+            JSONFileIconProvider(os.path.join(SELF_DIRECTORY, 'file_view_icons.json'))
+        )
         model.setFilter(
             QDir.AllEntries | QDir.NoDotAndDotDot | QDir.AllDirs | QDir.Hidden)
         
@@ -686,6 +690,10 @@ class ProjectExplorer(QFrame):
         self._tab_bar.setCurrentIndex(index)
         
 def main():
+    # The current working directory must be the package directory so that relative paths work in the
+    # theme.css and file_view_icons.json.
+    os.chdir(SELF_DIRECTORY)
+    
     # Set the AppUserModelID so that the window is not grouped with other python programs in the
     # taskbar.
     AppUserModelID = u'ProjectExplorer.ProjectExplorer'

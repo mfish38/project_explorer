@@ -1,0 +1,35 @@
+
+recursive-exclude project_explorer/.trash *
+
+include \
+    project_explorer/theme.css \
+    project_explorer/file_view_icons.json
+
+recursive-exclude project_explorer/icons *
+
+include \
+    project_explorer/icons/null.png
+
+include \
+    project_explorer/icons/material-design-icons/LICENSE \
+    project_explorer/icons/material-design-icons/README.md \
+    project_explorer/icons/material-design-icons/package.json \
+    project_explorer/icons/material-design-icons/action/drawable-xxxhdpi/ic_tab_black_18dp.png \
+    project_explorer/icons/material-design-icons/navigation/drawable-xxxhdpi/ic_close_black_18dp.png \
+    project_explorer/icons/material-design-icons/av/drawable-xxxhdpi/ic_playlist_add_black_18dp.png \
+    project_explorer/icons/material-design-icons/action/drawable-xxxhdpi/ic_delete_black_18dp.png \
+    project_explorer/icons/material-design-icons/hardware/drawable-xxxhdpi/ic_keyboard_arrow_down_black_18dp.png \
+    project_explorer/icons/material-design-icons/hardware/drawable-xxxhdpi/ic_keyboard_arrow_right_black_18dp.png \
+    project_explorer/icons/material-design-icons/action/drawable-xxxhdpi/ic_note_add_black_18dp.png \
+    project_explorer/icons/material-design-icons/file/drawable-xxxhdpi/ic_create_new_folder_black_18dp.png \
+    project_explorer/icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png
+
+include \
+    project_explorer/icons/a-file-icon/LICENSE.md \
+    project_explorer/icons/a-file-icon/README.md \
+    project_explorer/icons/a-file-icon/package.json \
+    project_explorer/icons/a-file-icon/icons/multi/*
+
+exclude \
+    project_explorer/icons/a-file-icon/icons/multi/*x.png
+    
