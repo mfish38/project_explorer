@@ -12,6 +12,7 @@ import datetime
 import glob
 import itertools
 import ctypes
+import json
 
 from PySide.QtCore import Signal, QModelIndex, Qt, QDir, QEvent
 from PySide.QtGui import (
@@ -28,6 +29,7 @@ from PySide.QtGui import (
     QTreeView,
     QToolBar,
     QMessageBox,
+    QFileDialog,
 )
 
 from extended_tabs import ExtendedTabBar, ExtendedTabWidget
@@ -36,6 +38,7 @@ from json_file_icon_provider import JSONFileIconProvider
 SELF_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 
 TRASH_DIRECTORY = os.path.join(SELF_DIRECTORY, '.trash')
+PROJECTS_DIRECTORY = os.path.join(SELF_DIRECTORY, '.projects')
 
 def _valid_split(path):
     '''
@@ -548,23 +551,33 @@ class RootWidget(QFrame):
         Sets whether close button is disabled.
         '''
         self._close_widget.setDisabled(disabled)
+    
+    def path(self):
+        '''
+        Gets the path of the root.
+        '''
+        return self._model.filePath(self._view.rootIndex())
 
 class Project(QFrame):
     '''
     This widget displays all of the roots for a project in a vertical splitter.
     '''
-    def __init__(self):
+    name_changed = Signal()
+    
+    def __init__(self, name):
         super(Project, self).__init__()
 
+        self._name = name
+        
         # --- setup the splitter ---
         self._splitter = QSplitter()
         self._splitter.setOrientation(Qt.Vertical)
 
-        self.add_root()
         self._set_closeing_disabled(True)
         
-        # --- setup the add button ---
+        # --- setup the project buttons ---
         tool_bar = QToolBar()
+        
         
         add_root_action = QAction('Add Root', self);
         tool_bar.addAction(add_root_action)
@@ -576,13 +589,22 @@ class Project(QFrame):
         tool_bar.widgetForAction(open_trash_action).setObjectName('open_trash')
         open_trash_action.triggered.connect(self.open_trash)
         
+        save_action = QAction('Save Project', self);
+        tool_bar.addAction(save_action)
+        tool_bar.widgetForAction(save_action).setObjectName('save_project')
+        save_action.triggered.connect(self.save)
+        
         # --- setup the layout ---
         main_layout = QVBoxLayout()
         
         main_layout.addWidget(self._splitter)
         main_layout.addWidget(tool_bar)
         self.setLayout(main_layout)
-        
+    
+    @property
+    def name(self):
+        return self._name
+    
     def _set_closeing_disabled(self, disabled):
         '''
         Sets whether the close buttons of all the project roots are disabled.
@@ -624,20 +646,78 @@ class Project(QFrame):
             self._set_closeing_disabled(True)
         
         self.sender().deleteLater()
+    
+    def save(self):
+        '''
+        Prompts the user for project name and saves the current state of the project to a JSON file
+        as follows:
+            
+            [[list of root paths], [list of root widget sizes]]
+        '''
+        if not os.path.isdir(PROJECTS_DIRECTORY):
+            os.makedirs(PROJECTS_DIRECTORY)
+        
+        path, filter = QFileDialog.getSaveFileName(
+            self, 'Save Project', os.path.join(PROJECTS_DIRECTORY, self._name))
+        
+        if path == '' and filter == '':
+            return
+        
+        root_paths = [
+            self._splitter.widget(index).path()
+            for index in xrange(self._splitter.count())]
+
+        spliter_sizes = self._splitter.sizes()
+
+        state = [root_paths, spliter_sizes]
+        
+        with open(path, 'w') as save_file:
+            json.dump(state, save_file)
+        
+        self._name = os.path.splitext(os.path.basename(path))[0]
+        
+        self.name_changed.emit()
+
+    @classmethod
+    def open(cls, path):
+        '''
+        Instantiates a Project widget from the given saved project file, and returns it.
+        '''
+        with open(path, 'r') as save_file:
+            state = json.load(save_file)
+        
+        root_paths, spliter_sizes = state
+        
+        name = os.path.splitext(os.path.basename(path))[0]
+        
+        project = cls(name)
+        
+        for path in root_paths:
+            project.add_root(path=path)
+        
+        project._splitter.setSizes(spliter_sizes)
+        
+        return project
 
 class ProjectTabBar(ExtendedTabBar):
     '''
     Tab bar for switching between different open projects, as well as opening new ones.
     '''
+    open_project_requested = Signal()
     new_tab_requested = Signal()
     
     def __init__(self):
         super(ProjectTabBar, self).__init__()
         
-        new_tab_action = QAction('New tab', self);
-        self.floating_toolbar.addAction(new_tab_action)
-        self.floating_toolbar.widgetForAction(new_tab_action).setObjectName('new_tab')
-        new_tab_action.triggered.connect(self.new_tab_requested.emit)
+        open_project_action = QAction('Open Project', self);
+        self.floating_toolbar.addAction(open_project_action)
+        self.floating_toolbar.widgetForAction(open_project_action).setObjectName('open_project')
+        open_project_action.triggered.connect(self.open_project_requested.emit)
+        
+        new_project_action = QAction('New Project', self);
+        self.floating_toolbar.addAction(new_project_action)
+        self.floating_toolbar.widgetForAction(new_project_action).setObjectName('new_project')
+        new_project_action.triggered.connect(self.new_tab_requested.emit)
     
 class ProjectExplorer(QFrame):
     '''
@@ -658,6 +738,7 @@ class ProjectExplorer(QFrame):
         self._tab_bar.setUsesScrollButtons(True)
         self._tab_bar.setDrawBase(False)
         self._tab_bar.new_tab_requested.connect(self._new_project)
+        self._tab_bar.open_project_requested.connect(self._open_project)
         self._tab_widget.setTabBar(self._tab_bar)
         
         main_layout = QHBoxLayout()
@@ -686,8 +767,34 @@ class ProjectExplorer(QFrame):
             
             project_count += 1
     
-        index = self._tab_widget.addTab(Project(), project_name)
+        project = Project(project_name)
+        project.name_changed.connect(self._handle_name_change)
+        project.add_root()
+        index = self._tab_widget.addTab(project, project_name)
         self._tab_bar.setCurrentIndex(index)
+        
+    def _open_project(self):
+        '''
+        Opens a saved project.
+        '''
+        path, filter = QFileDialog.getOpenFileName(
+            self, 'Open Project', os.path.join(PROJECTS_DIRECTORY))
+        
+        if path == '' and filter == '':
+            return
+        
+        project = Project.open(path)
+        project.name_changed.connect(self._handle_name_change)
+        index = self._tab_widget.addTab(project, project.name)
+        self._tab_bar.setCurrentIndex(index)
+    
+    def _handle_name_change(self):
+        '''
+        Updates the tab text of projects that have been saved.
+        '''
+        project = self.sender()
+        sender_index = self._tab_widget.indexOf(project)
+        self._tab_bar.setTabText(sender_index, project.name)
         
 def main():
     # The current working directory must be the package directory so that relative paths work in the

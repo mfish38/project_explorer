@@ -217,3 +217,9 @@ class ExtendedTabWidget(QFrame):
         self._stack.insertWidget(index, widget)
         
         return index
+    
+    def indexOf(self, widget):
+        '''
+        Returns the index of the given widget.
+        '''
+        return self._stack.indexOf(widget)

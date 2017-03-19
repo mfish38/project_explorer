@@ -17,8 +17,12 @@ ProjectTabBar QToolBar QToolButton:hover {
     background: #999999;
 }
 
-ProjectTabBar QToolBar QToolButton#new_tab {
-    qproperty-icon: url(icons/material-design-icons/action/drawable-xxxhdpi/ic_tab_black_18dp.png);
+ProjectTabBar QToolBar QToolButton#open_project {
+    qproperty-icon: url(icons/material-design-icons/action/drawable-xxxhdpi/ic_open_in_browser_black_18dp.png);
+}
+
+ProjectTabBar QToolBar QToolButton#new_project {
+    qproperty-icon: url(icons/material-design-icons/av/drawable-xxxhdpi/ic_fiber_new_black_18dp.png);
 }
 
 /* Hide tab tear indicator. */
@@ -70,6 +74,9 @@ Project QToolBar QToolButton:hover {
     background: #777777;
 }
 
+Project QToolBar QToolButton#save_project {
+    qproperty-icon: url(icons/material-design-icons/content/drawable-xxxhdpi/ic_save_black_18dp.png);
+}
 Project QToolBar QToolButton#add_root {
     qproperty-icon: url(icons/material-design-icons/av/drawable-xxxhdpi/ic_playlist_add_black_18dp.png);
 }
