@@ -449,7 +449,7 @@ class RootWidget(QFrame):
         
         mime_data = clipboard.mimeData()
 
-        destination_directory = self.current_item_directory()
+        destination_directory = self.current_directory()
         
         if mime_data.hasUrls():
             paths = [url.toLocalFile() for url in mime_data.urls() if url.isLocalFile()]
