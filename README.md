@@ -7,7 +7,9 @@ Each tab represents a different project, and each project can have multiple root
 
 ## Keyboard Shortcuts
 
-| Action | Keys                            |
-| ------ | ------------------------------- |
-| Trash  | <kbd>Del</kbd>                  |
-| Delete | <kbd>Shift</kbd>+<kbd>Del</kbd> |
+| Action               | Keys                            |
+| -------------------- | ------------------------------- |
+| Copy File/Directory  | <kbd>Ctrl</kbd>+<kbd>C</kbd>    |
+| Paste File/Directory | <kbd>Ctrl</kbd>+<kbd>V</kbd>    |
+| Trash Selected       | <kbd>Del</kbd>                  |
+| Delete Selected      | <kbd>Shift</kbd>+<kbd>Del</kbd> |
