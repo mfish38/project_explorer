@@ -13,8 +13,9 @@ import glob
 import itertools
 import ctypes
 import json
+import shutil
 
-from PySide.QtCore import Signal, QModelIndex, Qt, QDir, QEvent
+from PySide.QtCore import Signal, QModelIndex, Qt, QDir, QEvent, QUrl, QMimeData
 from PySide.QtGui import (
     QLineEdit,
     QSortFilterProxyModel,
@@ -408,15 +409,106 @@ class RootWidget(QFrame):
         '''
         Handle short cuts key presses.
         '''
-        if event.key() == Qt.Key_Delete:
-            if QApplication.keyboardModifiers() == Qt.ShiftModifier:               
+        key = event.key()
+        modifiers = QApplication.keyboardModifiers()
+        
+        if key == Qt.Key_Delete:
+            if modifiers == Qt.ShiftModifier:               
                 self._delete_selected()
-            else:
+            elif modifiers == Qt.NoModifier:
                 self._trash_selected()
+        # TODO:
+        # elif key == Qt.Key_X:
+            # if modifiers == Qt.ControlModifier:
+                # self._cut()
+        elif key == Qt.Key_C:
+            if modifiers == Qt.ControlModifier:
+                self._copy()
+        elif key == Qt.Key_V:
+            if modifiers == Qt.ControlModifier:
+                self._paste()
     
+    def _copy(self):
+        '''
+        Copies all of the selected items to the clipboard.
+        '''
+        filePath = self._model.filePath
+        urls = [QUrl.fromLocalFile(filePath(index)) for index in self._view.selectedIndexes()]
+        
+        mime_data = QMimeData()
+        mime_data.setUrls(urls)
+        
+        clipboard = QApplication.clipboard()
+        clipboard.setMimeData(mime_data)
+        
+    def _paste(self):
+        '''
+        Pastes files/folders from the clipboard.
+        '''
+        clipboard = QApplication.clipboard()
+        
+        mime_data = clipboard.mimeData()
+
+        destination_directory = self.current_item_directory()
+        
+        if mime_data.hasUrls():
+            paths = [url.toLocalFile() for url in mime_data.urls() if url.isLocalFile()]
+            
+            for path in paths:
+                source_directory = os.path.dirname(path)
+                
+                basename = os.path.basename(path)
+            
+                if os.path.isdir(path):
+                    if source_directory == destination_directory:
+                        # Get a free version suffix.
+                        counter = 0
+                        while True:
+                            destination = os.path.join(
+                                destination_directory, basename + '_{}'.format(counter))
+                            
+                            if not os.path.isdir(destination):
+                                break
+                                
+                            counter += 1
+                    else:
+                        destination = os.path.join(destination_directory, basename)
+                        
+                    shutil.copytree(path, destination)
+                elif os.path.isfile(path):
+                    if source_directory == destination_directory:
+                        # Get a free version suffix.
+                        name, extension = os.path.splitext(basename)
+                        counter = 0
+                        while True:
+                            destination = os.path.join(
+                                destination_directory, name + '_{}{}'.format(counter, extension))
+                            
+                            if not os.path.isfile(destination):
+                                break
+                                
+                            counter += 1
+                    else:
+                        destination = os.path.join(destination_directory, basename)
+                        
+                    shutil.copy2(path, destination)
+        
+        # TODO:
+        # elif mime_data.hasText():
+        # elif mime_data.hasImage():
+
     def current_item_directory(self):
         '''
         Returns the directory containing the currently selected item.
+        '''
+        active_path = self._model.filePath(self._view.currentIndex())
+        
+        return os.path.dirname(active_path)
+        
+    def current_directory(self):
+        '''
+        Returns the directory containing the currently selected item, or the item if it is a
+        directory.
         '''
         active_path = self._model.filePath(self._view.currentIndex())
         
@@ -432,13 +524,12 @@ class RootWidget(QFrame):
         Creates a new file in the same directory as the current item, and has the user edit its
         name.
         '''
-        directory = self.current_item_directory()
+        directory = self.current_directory()
         
         # Get a free file name
         counter = 0
-        new_file_path_base = os.path.join(directory, 'new_file_{}')
         while True:
-            new_file_path = new_file_path_base.format(counter)
+            new_file_path = os.path.join(directory, 'new_file_{}'.format(counter))
             
             if not os.path.isfile(new_file_path):
                 break
@@ -456,13 +547,12 @@ class RootWidget(QFrame):
         Creates a directory in the same directory as the current item, and has the user edit its
         name.
         '''
-        directory = self.current_item_directory()
+        directory = self.current_directory()
         
         # Get a free directory name
         counter = 0
-        new_directory_path_base = os.path.join(directory, 'new_directory_{}')
         while True:
-            new_directory_path = new_directory_path_base.format(counter)
+            new_directory_path = os.path.join(directory, 'new_directory_{}'.format(counter))
             
             if not os.path.isdir(new_directory_path):
                 break
@@ -499,11 +589,20 @@ class RootWidget(QFrame):
             os.makedirs(TRASH_DIRECTORY)
     
         for index in self._view.selectedIndexes():
-            item_name = os.path.basename(self._model.filePath(index))
+            path = self._model.filePath(index)
+            
+            item_name = os.path.basename(path)
             filesystem_frendly_date = str(datetime.datetime.now()).replace(':', ';')
             deleted_item_name = '{}@{}'.format(item_name, filesystem_frendly_date)
-            shutil.move(
-                self._model.filePath(index), os.path.join(TRASH_DIRECTORY, deleted_item_name))
+            
+            if os.path.isdir(path):
+                shutil.copytree(
+                    self._model.filePath(index), os.path.join(TRASH_DIRECTORY, deleted_item_name))
+            elif os.path.isfile(path):
+                shutil.copy2(
+                    self._model.filePath(index), os.path.join(TRASH_DIRECTORY, deleted_item_name))
+            
+            self._model.remove(index)
 
     def _handle_activated_index(self, index):
         '''
