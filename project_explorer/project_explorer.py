@@ -265,7 +265,8 @@ class FileSystemProxyModel(QSortFilterProxyModel):
     '''
     def setData(self, index, value, role):
         '''
-        Fix issue where setting a name to the same name in a different case causes an error.
+        Fix issue where setting a name to the same name in a different case causes an error. This is
+        a Qt bug.
         '''
         if role == Qt.EditRole and self.fileName(index).lower() == value.lower():
             try:
