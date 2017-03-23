@@ -555,7 +555,9 @@ class RootWidget(QFrame):
         open(new_file_path, 'a').close()
         
         # Have the user edit the file name.
-        self._view.edit(self._model.path_index(new_file_path))
+        index = self._model.path_index(new_file_path)
+        self._view.scrollTo(index)
+        self._view.edit(index)
     
     def _create_directory(self):
         '''
@@ -578,7 +580,9 @@ class RootWidget(QFrame):
         os.mkdir(new_directory_path)
         
         # Have the user edit the file name.
-        self._view.edit(self._model.path_index(new_directory_path))
+        index = self._model.path_index(new_directory_path)
+        self._view.scrollTo(index)
+        self._view.edit(index)
     
     def _delete_selected(self):
         '''
