@@ -696,7 +696,6 @@ class Project(QFrame):
         # --- setup the project buttons ---
         tool_bar = QToolBar()
         
-        
         add_root_action = QAction('Add Root', self);
         tool_bar.addAction(add_root_action)
         tool_bar.widgetForAction(add_root_action).setObjectName('add_root')
