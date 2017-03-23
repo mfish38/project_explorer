@@ -263,11 +263,18 @@ class FileSystemProxyModel(QSortFilterProxyModel):
     '''
     Sorts the source QFileSystemModel.
     '''
+    def __init__(self):
+        super(FileSystemProxyModel, self).__init__()
+        
+        self.rowsInserted.connect(self.invalidate)
+        self.dataChanged.connect(self.invalidate)
+    
     def setData(self, index, value, role):
         '''
-        Fix issue where setting a name to the same name in a different case causes an error. This
-        issue is caused by a Qt bug (https://bugreports.qt.io/browse/QTBUG-3570).
+        Modify a file system item name.
         '''
+        # Fix issue where setting a name to the same name in a different case causes an error. This
+        # issue is caused by a Qt bug (https://bugreports.qt.io/browse/QTBUG-3570).
         if role == Qt.EditRole and self.fileName(index).lower() == value.lower():
             try:
                 source = self.filePath(index)
@@ -275,6 +282,7 @@ class FileSystemProxyModel(QSortFilterProxyModel):
             except:
                 return False
             else:
+                self.dataChanged.emit(index, index)
                 return True
         else:
             return self.sourceModel().setData(self.mapToSource(index), value, role)
@@ -326,16 +334,6 @@ class FileSystemProxyModel(QSortFilterProxyModel):
             return True
         else:
             return False
-
-class _EditableItemDelegate(QStyledItemDelegate):
-    '''
-    An item delegate that is editable, and emits a signal when editing is finished.
-    '''
-    edited = Signal(QModelIndex)
-    
-    def setModelData(self, editor, model, index):
-        super(_EditableItemDelegate, self).setModelData(editor, model, index)
-        self.edited.emit(index)
         
 class RootWidget(QFrame):
     '''
@@ -367,11 +365,6 @@ class RootWidget(QFrame):
         self._view.setSortingEnabled(True)
         self._view.setHeaderHidden(True)
         self._view.sortByColumn(0, Qt.AscendingOrder)
-        
-        # Setup resorting the view when a filename is edited.
-        self._file_item_delegate = _EditableItemDelegate()
-        self._file_item_delegate.edited.connect(self._model.invalidate)
-        self._view.setItemDelegate(self._file_item_delegate)
         
         # Setup drag and drop.
         self._view.setDragDropMode(QTreeView.DragDrop)
