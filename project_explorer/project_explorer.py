@@ -259,10 +259,25 @@ class RootEdit(QLineEdit):
         
         return super(RootEdit, self).event(event)
 
-class SortedFileSystemProxyModel(QSortFilterProxyModel):
+class FileSystemProxyModel(QSortFilterProxyModel):
     '''
     Sorts the source QFileSystemModel.
     '''
+    def setData(self, index, value, role):
+        '''
+        Fix issue where setting a name to the same name in a different case causes an error.
+        '''
+        if role == Qt.EditRole and self.fileName(index).lower() == value.lower():
+            try:
+                source = self.filePath(index)
+                os.rename(source, os.path.join(os.path.dirname(source), value))
+            except:
+                return False
+            else:
+                return True
+        else:
+            return self.sourceModel().setData(self.mapToSource(index), value, role)
+
     def isDir(self, index):
         '''
         Pass through to QFileSystemModel
@@ -279,7 +294,13 @@ class SortedFileSystemProxyModel(QSortFilterProxyModel):
         '''
         Pass through to QFileSystemModel
         '''
-        return self.sourceModel().filePath(self.mapToSource(index))
+        return self.sourceModel().filePath(self.mapToSource(index))    
+        
+    def fileName(self, index):
+        '''
+        Pass through to QFileSystemModel
+        '''
+        return self.sourceModel().fileName(self.mapToSource(index))
         
     def remove(self, index):
         '''
@@ -334,7 +355,7 @@ class RootWidget(QFrame):
         model.setFilter(
             QDir.AllEntries | QDir.NoDotAndDotDot | QDir.AllDirs | QDir.Hidden)
         
-        self._model = SortedFileSystemProxyModel()
+        self._model = FileSystemProxyModel()
         self._model.setSourceModel(model)
         
         # --- setup the tree view ---
