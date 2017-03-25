@@ -25,6 +25,10 @@ ProjectTabBar QToolBar QToolButton#new_project {
     qproperty-icon: url(icons/material-design-icons/av/drawable-xxxhdpi/ic_fiber_new_black_18dp.png);
 }
 
+ProjectTabBar QToolBar QToolButton#settings {
+    qproperty-icon: url(icons/material-design-icons/action/drawable-xxxhdpi/ic_settings_black_18dp.png);
+}
+
 /* Hide tab tear indicator. */
 ProjectTabBar QTabBar::tear {
     width: 0px; 

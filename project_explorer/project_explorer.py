@@ -15,7 +15,7 @@ import ctypes
 import json
 import shutil
 
-from PySide.QtCore import Signal, QModelIndex, Qt, QDir, QEvent, QUrl, QMimeData
+from PySide.QtCore import Signal, QModelIndex, Qt, QDir, QEvent, QUrl, QMimeData, QFileSystemWatcher
 from PySide.QtGui import (
     QLineEdit,
     QSortFilterProxyModel,
@@ -40,6 +40,8 @@ SELF_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 
 TRASH_DIRECTORY = os.path.join(SELF_DIRECTORY, '.trash')
 PROJECTS_DIRECTORY = os.path.join(SELF_DIRECTORY, '.projects')
+SETTINGS_PATH = os.path.join(SELF_DIRECTORY, '.settings.json')
+DEFAULT_SETTINGS_PATH = os.path.join(SELF_DIRECTORY, '.default_settings.json')
 
 def _valid_split(path):
     '''
@@ -823,6 +825,7 @@ class ProjectTabBar(ExtendedTabBar):
     '''
     open_project_requested = Signal()
     new_tab_requested = Signal()
+    settings_requested = Signal()
     
     def __init__(self):
         super(ProjectTabBar, self).__init__()
@@ -835,7 +838,12 @@ class ProjectTabBar(ExtendedTabBar):
         new_project_action = QAction('New Project', self);
         self.floating_toolbar.addAction(new_project_action)
         self.floating_toolbar.widgetForAction(new_project_action).setObjectName('new_project')
-        new_project_action.triggered.connect(self.new_tab_requested.emit)
+        new_project_action.triggered.connect(self.new_tab_requested.emit)  
+        
+        settings_action = QAction('Settings', self);
+        self.right_toolbar.addAction(settings_action)
+        self.right_toolbar.widgetForAction(settings_action).setObjectName('settings')
+        settings_action.triggered.connect(self.settings_requested.emit)
     
 class ProjectExplorer(QFrame):
     '''
@@ -857,6 +865,7 @@ class ProjectExplorer(QFrame):
         self._tab_bar.setDrawBase(False)
         self._tab_bar.new_tab_requested.connect(self._new_project)
         self._tab_bar.open_project_requested.connect(self._open_project)
+        self._tab_bar.settings_requested.connect(self._open_settings)
         self._tab_widget.setTabBar(self._tab_bar)
         
         main_layout = QHBoxLayout()
@@ -866,6 +875,10 @@ class ProjectExplorer(QFrame):
         main_layout.addWidget(self._tab_widget)
         main_layout.addWidget(self._tab_bar)
         self.setLayout(main_layout)
+        
+        self._settings_watcher = QFileSystemWatcher()
+        self._settings_watcher.fileChanged.connect(self.load_settings)
+        self.load_settings()
         
         self._new_project()
         
@@ -913,6 +926,20 @@ class ProjectExplorer(QFrame):
         project = self.sender()
         sender_index = self._tab_widget.indexOf(project)
         self._tab_bar.setTabText(sender_index, project.name)
+    
+    def _open_settings(self):
+        os.startfile(SETTINGS_PATH)
+    
+    def load_settings(self):
+        # Make sure the settings exist.
+        if not os.path.isfile(SETTINGS_PATH):
+            shutil.copy(DEFAULT_SETTINGS_PATH, SETTINGS_PATH)
+        
+        # Make sure the settings are being watched. Note that this needs to be outside of the
+        # existence check above, otherwise the settings won't be watched if they already exist.
+        self._settings_watcher.addPath(SETTINGS_PATH)
+            
+        print 'here'
         
 def main():
     # The current working directory must be the package directory so that relative paths work in the

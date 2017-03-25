@@ -4,7 +4,8 @@ recursive-exclude project_explorer/.projects *
 
 include \
     project_explorer/theme.css \
-    project_explorer/file_view_icons.json
+    project_explorer/file_view_icons.json \
+    project_explorer/.default_settings.json
 
 recursive-exclude project_explorer/icons *
 
@@ -25,7 +26,8 @@ include \
     project_explorer/icons/material-design-icons/file/drawable-xxxhdpi/ic_create_new_folder_black_18dp.png \
     project_explorer/icons/material-design-icons/file/drawable-xxxhdpi/ic_folder_black_18dp.png \
     project_explorer/icons/material-design-icons/content/drawable-xxxhdpi/ic_save_black_18dp.png \
-    project_explorer/icons/material-design-icons/action/drawable-xxxhdpi/ic_open_in_browser_black_18dp.png
+    project_explorer/icons/material-design-icons/action/drawable-xxxhdpi/ic_open_in_browser_black_18dp.png \
+    project_explorer/icons/material-design-icons/action/drawable-xxxhdpi/ic_settings_black_18dp.png
 
 include \
     project_explorer/icons/a-file-icon/LICENSE.md \
