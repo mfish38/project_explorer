@@ -15,7 +15,7 @@ import ctypes
 import json
 import shutil
 
-from PySide.QtCore import Signal, QModelIndex, Qt, QDir, QEvent, QUrl, QMimeData, QFileSystemWatcher
+from PySide.QtCore import Signal, QModelIndex, Qt, QDir, QEvent, QUrl, QMimeData, QFileSystemWatcher, QTimer
 from PySide.QtGui import (
     QLineEdit,
     QSortFilterProxyModel,
@@ -35,6 +35,7 @@ from PySide.QtGui import (
 
 from extended_tabs import ExtendedTabBar, ExtendedTabWidget
 from json_file_icon_provider import JSONFileIconProvider
+import extended_json
 
 SELF_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 
@@ -344,7 +345,7 @@ class RootWidget(QFrame):
     '''
     close_request = Signal()
     
-    def __init__(self, path=None):
+    def __init__(self, path=None, settings=None):
         super(RootWidget, self).__init__()
             
         # --- setup the file system model ---
@@ -422,6 +423,14 @@ class RootWidget(QFrame):
         if path is not None: 
             self._set_root_path(path)
             self._root_edit.update()
+        
+        self._settings = None
+        self.update_settings(settings)
+    
+    def update_settings(self, new_settings):
+        self._settings = new_settings
+        
+        print new_settings
     
     def keyPressEvent(self, event):
         '''
@@ -685,7 +694,7 @@ class Project(QFrame):
     '''
     name_changed = Signal()
     
-    def __init__(self, name):
+    def __init__(self, name, settings=None):
         super(Project, self).__init__()
 
         self._name = name
@@ -720,10 +729,20 @@ class Project(QFrame):
         main_layout.addWidget(self._splitter)
         main_layout.addWidget(tool_bar)
         self.setLayout(main_layout)
+        
+        self._settings = None
+        self.update_settings(settings)
     
     @property
     def name(self):
         return self._name
+    
+    def update_settings(self, new_settings):
+        self._settings = new_settings
+        
+        roots = (self._splitter.widget(index) for index in xrange(self._splitter.count()))
+        for root in roots:
+            root.update_settings(new_settings)
     
     def _set_closeing_disabled(self, disabled):
         '''
@@ -739,7 +758,7 @@ class Project(QFrame):
         '''
         Adds a new root to the project.
         '''
-        root_widget = RootWidget(path)
+        root_widget = RootWidget(path, settings=self._settings)
         root_widget.close_request.connect(self.handle_close_request)
         
         self._splitter.addWidget(root_widget)
@@ -880,7 +899,16 @@ class ProjectExplorer(QFrame):
         
         self._settings_watcher = QFileSystemWatcher()
         self._settings_watcher.fileChanged.connect(self.load_settings)
-        self.load_settings()
+        
+        self._settings = None
+        self._load_settings()
+        
+        # There needs to be a delay after the settings watcher triggers to allow external
+        # applications to finish writing to disk.
+        self._settings_load_delay = QTimer()
+        self._settings_load_delay.setSingleShot(True)
+        self._settings_load_delay.setInterval(200)
+        self._settings_load_delay.timeout.connect(self._load_settings)
         
         self._new_project()
         
@@ -900,9 +928,10 @@ class ProjectExplorer(QFrame):
             
             project_count += 1
     
-        project = Project(project_name)
+        project = Project(project_name, settings=self._settings)
         project.name_changed.connect(self._handle_name_change)
         project.add_root()
+        
         index = self._tab_widget.addTab(project, project_name)
         self._tab_bar.setCurrentIndex(index)
         
@@ -933,18 +962,38 @@ class ProjectExplorer(QFrame):
         self._tab_bar.setTabText(sender_index, project.name)
     
     def _open_settings(self):
+        '''
+        Opens the settings file.
+        '''
         os.startfile(SETTINGS_PATH)
     
-    def load_settings(self):
+    def _load_settings(self):
+        '''
+        Since the settings file is modified by an external program, load_settings() must wait some
+        delay to allow the file to be completely written. This function does the actually settings
+        load.
+        '''
         # Make sure the settings exist.
         if not os.path.isfile(SETTINGS_PATH):
             shutil.copy(DEFAULT_SETTINGS_PATH, SETTINGS_PATH)
         
         # Make sure the settings are being watched. Note that this needs to be outside of the
         # existence check above, otherwise the settings won't be watched if they already exist.
-        self._settings_watcher.addPath(SETTINGS_PATH)
-            
-        print 'here'
+        if len(self._settings_watcher.files()) == 0:
+            self._settings_watcher.addPath(SETTINGS_PATH)
+        
+        self._settings = extended_json.load_file(SETTINGS_PATH)
+        
+        # Update the setting of all the open project widgets.
+        projects = (self._tab_widget.widget(index) for index in xrange(self._tab_widget.count()))
+        for project in projects:
+            project.update_settings(self._settings)
+    
+    def load_settings(self):
+        '''
+        Loads the settings file.
+        '''
+        self._settings_load_delay.start()
         
 def main():
     # The current working directory must be the package directory so that relative paths work in the

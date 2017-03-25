@@ -218,6 +218,18 @@ class ExtendedTabWidget(QFrame):
         
         return index
     
+    def count(self):
+        '''
+        Returns the number of widgets.
+        '''
+        return self._stack.count()    
+        
+    def widget(self, index):
+        '''
+        Returns the widget at the given index.
+        '''
+        return self._stack.widget(index)
+    
     def indexOf(self, widget):
         '''
         Returns the index of the given widget.
