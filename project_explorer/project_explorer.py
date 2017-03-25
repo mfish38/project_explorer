@@ -879,7 +879,7 @@ class ProjectExplorer(QFrame):
         
         self._tab_bar.setShape(ExtendedTabBar.RoundedEast)
         self._tab_bar.setTabsClosable(True)
-        self._tab_bar.setMovable(True)
+        # self._tab_bar.setMovable(True)
         self._tab_bar.setUsesScrollButtons(True)
         self._tab_bar.setDrawBase(False)
         
