@@ -324,9 +324,10 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         model = self.sourceModel()
         
         # Sort directories above files, regardless of sort order.
-        if model.isDir(left) and not model.isDir(right):
-            return True if self.sortOrder() == Qt.AscendingOrder else False
-        elif not model.isDir(left) and model.isDir(right):
+        if model.isDir(left):
+            if not model.isDir(right):
+                return True if self.sortOrder() == Qt.AscendingOrder else False
+        elif model.isDir(right):
             return False if self.sortOrder() == Qt.AscendingOrder else True
         
         # Sort items of the same type (file or directory) lexicographically.
