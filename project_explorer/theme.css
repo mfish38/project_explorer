@@ -13,29 +13,29 @@ QToolBar {
     border: none;
 }
 
-ProjectTabBar QToolBar QToolButton:hover {
+ProjectExplorer QToolBar QToolButton:hover {
     background: #999999;
 }
 
-ProjectTabBar QToolBar QToolButton#open_project {
+ProjectExplorer QToolBar QToolButton#open_project {
     qproperty-icon: url(icons/material-design-icons/action/drawable-xxxhdpi/ic_open_in_browser_black_18dp.png);
 }
 
-ProjectTabBar QToolBar QToolButton#new_project {
+ProjectExplorer QToolBar QToolButton#new_project {
     qproperty-icon: url(icons/material-design-icons/av/drawable-xxxhdpi/ic_fiber_new_black_18dp.png);
 }
 
-ProjectTabBar QToolBar QToolButton#settings {
+ProjectExplorer QToolBar QToolButton#settings {
     qproperty-icon: url(icons/material-design-icons/action/drawable-xxxhdpi/ic_settings_black_18dp.png);
 }
 
 /* Hide tab tear indicator. */
-ProjectTabBar QTabBar::tear {
+ExtendedTabBar QTabBar::tear {
     width: 0px; 
     border: none;
 }
 
-ProjectTabBar {
+ExtendedTabBar {
     background-color: #666666;
     padding-left: 0px;
     padding-right: 1px;
@@ -43,26 +43,26 @@ ProjectTabBar {
     padding-bottom: 3px;
 }
 
-ProjectTabBar QTabBar::tab {
+ExtendedTabBar QTabBar::tab {
     border: 2px solid #666666;
     border-left: none;
     padding: 5px;
     background: #7D7D7D;
 }
 
-ProjectTabBar QTabBar::tab:selected {
+ExtendedTabBar QTabBar::tab:selected {
     background: #999999;
 }
 
-ProjectTabBar QTabBar::tab:hover {
+ExtendedTabBar QTabBar::tab:hover {
     background: #999999;
 }
 
-ProjectTabBar QTabBar::close-button { 
+ExtendedTabBar QTabBar::close-button { 
     image: url(icons/material-design-icons/navigation/drawable-xxxhdpi/ic_close_black_18dp.png);
 }
 
-ProjectTabBar QTabBar::close-button:hover {
+ExtendedTabBar QTabBar::close-button:hover {
     background: #777777;
 }
 

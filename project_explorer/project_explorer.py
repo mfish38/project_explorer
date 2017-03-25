@@ -818,32 +818,6 @@ class Project(QFrame):
         project._splitter.setSizes(spliter_sizes)
         
         return project
-
-class ProjectTabBar(ExtendedTabBar):
-    '''
-    Tab bar for switching between different open projects, as well as opening new ones.
-    '''
-    open_project_requested = Signal()
-    new_tab_requested = Signal()
-    settings_requested = Signal()
-    
-    def __init__(self):
-        super(ProjectTabBar, self).__init__()
-        
-        open_project_action = QAction('Open Project', self);
-        self.floating_toolbar.addAction(open_project_action)
-        self.floating_toolbar.widgetForAction(open_project_action).setObjectName('open_project')
-        open_project_action.triggered.connect(self.open_project_requested.emit)
-        
-        new_project_action = QAction('New Project', self);
-        self.floating_toolbar.addAction(new_project_action)
-        self.floating_toolbar.widgetForAction(new_project_action).setObjectName('new_project')
-        new_project_action.triggered.connect(self.new_tab_requested.emit)  
-        
-        settings_action = QAction('Settings', self);
-        self.right_toolbar.addAction(settings_action)
-        self.right_toolbar.widgetForAction(settings_action).setObjectName('settings')
-        settings_action.triggered.connect(self.settings_requested.emit)
     
 class ProjectExplorer(QFrame):
     '''
@@ -856,16 +830,44 @@ class ProjectExplorer(QFrame):
         
         self.setWindowTitle('ProjectExplorer')
         
-        self._tab_widget = ExtendedTabWidget()
-        self._tab_bar = ProjectTabBar()
-        self._tab_bar.setShape(ProjectTabBar.RoundedEast)
+        # --- Setup the tab bar ---
+        self._tab_bar = ExtendedTabBar()
+        
+        self._tab_bar.setShape(ExtendedTabBar.RoundedEast)
         self._tab_bar.setTabsClosable(True)
         self._tab_bar.setMovable(True)
         self._tab_bar.setUsesScrollButtons(True)
         self._tab_bar.setDrawBase(False)
-        self._tab_bar.new_tab_requested.connect(self._new_project)
-        self._tab_bar.open_project_requested.connect(self._open_project)
-        self._tab_bar.settings_requested.connect(self._open_settings)
+        
+        open_project_action = QAction('Open Project', self);
+        self._tab_bar.floating_toolbar.addAction(open_project_action)
+        (
+            self
+            ._tab_bar
+            .floating_toolbar
+            .widgetForAction(open_project_action)
+            .setObjectName('open_project')
+        )
+        open_project_action.triggered.connect(self._open_project)
+        
+        new_project_action = QAction('New Project', self);
+        self._tab_bar.floating_toolbar.addAction(new_project_action)
+        (
+            self
+            ._tab_bar
+            .floating_toolbar
+            .widgetForAction(new_project_action)
+            .setObjectName('new_project')
+        )
+        new_project_action.triggered.connect(self._new_project)  
+        
+        settings_action = QAction('Settings', self);
+        self._tab_bar.right_toolbar.addAction(settings_action)
+        self._tab_bar.right_toolbar.widgetForAction(settings_action).setObjectName('settings')
+        settings_action.triggered.connect(self._open_settings)
+        
+        # --- Setup the tab widget ---
+        self._tab_widget = ExtendedTabWidget()
         self._tab_widget.setTabBar(self._tab_bar)
         
         main_layout = QHBoxLayout()
@@ -908,6 +910,9 @@ class ProjectExplorer(QFrame):
         '''
         Opens a saved project.
         '''
+        if not os.path.isdir(PROJECTS_DIRECTORY):
+            os.makedirs(PROJECTS_DIRECTORY)
+            
         path, filter = QFileDialog.getOpenFileName(
             self, 'Open Project', os.path.join(PROJECTS_DIRECTORY))
         
