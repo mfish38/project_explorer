@@ -15,7 +15,7 @@ def loads(json_text):
     Parses the JSON data in the given string.
     
     Extends json.loads() to:
-        - Support comments.
+        - Support line comments of the form "//".
     '''
     # Remove comments.
     json_text = _COMMENT_REGEX.sub('', json_text)

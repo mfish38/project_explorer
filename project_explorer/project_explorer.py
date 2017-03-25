@@ -271,7 +271,32 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         
         self.rowsInserted.connect(self.invalidate)
         self.dataChanged.connect(self.invalidate)
+        
+        self._filter_extensions = set()
     
+    def filter_extensions(self, extensions):
+        '''
+        Sets the model to filter out files with the given extension.
+        
+        extensions:
+            A list of extensions to filter out. Empty list to stop filtering.
+        '''
+        self._filter_extensions = set(extensions)
+        
+        self.invalidate()
+    
+    def filterAcceptsRow(self, source_row, source_parent):
+        model = self.sourceModel()
+        
+        index = model.index(source_row, 0, source_parent)
+        
+        if model.isDir(index):
+            return True
+        
+        extension = os.path.splitext(model.filePath(index))[1]
+        
+        return extension not in self._filter_extensions
+        
     def setData(self, index, value, role):
         '''
         Modify a file system item name.
@@ -430,7 +455,7 @@ class RootWidget(QFrame):
     def update_settings(self, new_settings):
         self._settings = new_settings
         
-        print new_settings
+        self._model.filter_extensions(new_settings['filter_extensions'])
     
     def keyPressEvent(self, event):
         '''
