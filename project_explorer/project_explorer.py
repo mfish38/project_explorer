@@ -370,7 +370,7 @@ class RootWidget(QFrame):
     '''
     close_request = Signal()
     
-    def __init__(self, path=None, settings=None):
+    def __init__(self, settings, path=None):
         super(RootWidget, self).__init__()
             
         # --- setup the file system model ---
@@ -719,7 +719,7 @@ class Project(QFrame):
     '''
     name_changed = Signal()
     
-    def __init__(self, name, settings=None):
+    def __init__(self, name, settings):
         super(Project, self).__init__()
 
         self._name = name
@@ -783,7 +783,7 @@ class Project(QFrame):
         '''
         Adds a new root to the project.
         '''
-        root_widget = RootWidget(path, settings=self._settings)
+        root_widget = RootWidget(self._settings, path)
         root_widget.close_request.connect(self.handle_close_request)
         
         self._splitter.addWidget(root_widget)
@@ -843,7 +843,7 @@ class Project(QFrame):
         self.name_changed.emit()
 
     @classmethod
-    def open(cls, path):
+    def open(cls, path, settings):
         '''
         Instantiates a Project widget from the given saved project file, and returns it.
         '''
@@ -854,7 +854,7 @@ class Project(QFrame):
         
         name = os.path.splitext(os.path.basename(path))[0]
         
-        project = cls(name)
+        project = cls(name, settings)
         
         for path in root_paths:
             project.add_root(path=path)
@@ -953,7 +953,7 @@ class ProjectExplorer(QFrame):
             
             project_count += 1
     
-        project = Project(project_name, settings=self._settings)
+        project = Project(project_name, self._settings)
         project.name_changed.connect(self._handle_name_change)
         project.add_root()
         
@@ -973,7 +973,7 @@ class ProjectExplorer(QFrame):
         if path == '' and filter == '':
             return
         
-        project = Project.open(path)
+        project = Project.open(path, self._settings)
         project.name_changed.connect(self._handle_name_change)
         index = self._tab_widget.addTab(project, project.name)
         self._tab_bar.setCurrentIndex(index)
