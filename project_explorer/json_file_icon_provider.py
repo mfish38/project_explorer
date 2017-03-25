@@ -48,16 +48,12 @@ Filenames settings override extension settings.
 '''
 
 import os
-import re
-import json
-from fnmatch import fnmatch
 
 from PySide.QtCore import QFileInfo
 from PySide.QtGui import QFileIconProvider, QIcon, QFontDatabase, QFont
 
+import extended_json
 from font_icon import FontIcon
-
-_COMMENT_REGEX = re.compile(r'//.*$', flags=re.MULTILINE)
 
 class JSONFileIconProvider(QFileIconProvider):
     '''
@@ -70,13 +66,7 @@ class JSONFileIconProvider(QFileIconProvider):
         '''
         super(JSONFileIconProvider, self).__init__()
         
-        with open(path) as json_file:
-            json_text = json_file.read()
-        
-        # Remove comments
-        json_text = _COMMENT_REGEX.sub('', json_text)
-        
-        settings = json.loads(json_text)
+        settings = extended_json.load_file(path)
         
         # Get the font families to load.
         fonts_to_load = settings['fonts_to_load']
