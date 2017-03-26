@@ -992,6 +992,27 @@ class ProjectExplorer(QFrame):
         '''
         os.startfile(SETTINGS_PATH)
     
+    def _apply_theme_settings(self):
+        theme_path = self._settings['theme']
+
+        # Interpret relative paths as relative to this module.
+        if not os.path.isabs(theme_path):
+            theme_path = os.path.join(SELF_DIRECTORY, theme_path)
+        
+        # Load and apply the theme.
+        try:
+            with open(theme_path) as theme:
+                style_sheet = theme.read()
+        except IOError:
+            QMessageBox.critical(
+                self,
+                'Invalid Setting',
+                'Unable to load theme:\n"{}"'.format(theme_path))
+                
+            return
+            
+        self.setStyleSheet(style_sheet)
+        
     def _load_settings(self):
         '''
         Since the settings file is modified by an external program, load_settings() must wait some
@@ -1008,6 +1029,8 @@ class ProjectExplorer(QFrame):
             self._settings_watcher.addPath(SETTINGS_PATH)
         
         self._settings = extended_json.load_file(SETTINGS_PATH)
+        
+        self._apply_theme_settings()
         
         # Update the setting of all the open project widgets.
         projects = (self._tab_widget.widget(index) for index in xrange(self._tab_widget.count()))
@@ -1031,11 +1054,6 @@ def main():
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(AppUserModelID)
 
     application = QApplication(sys.argv)
-    
-    # Load and apply the theme.
-    with open('theme.css') as theme:
-        style_sheet = theme.read()
-    application.setStyleSheet(style_sheet)
     
     # Create and show the main window.
     main_window = ProjectExplorer()
