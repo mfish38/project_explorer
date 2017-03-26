@@ -166,6 +166,21 @@ class ExtendedTabWidget(QFrame):
         self._main_layout.addWidget(self._stack)
         self.setLayout(self._main_layout)
     
+    def _move_tab(self, from_, to):
+        '''
+        Handles tab moves so that the tab bar indices stay aligned with the widget stack indices.
+        '''
+        displaced_widget = self._stack.widget(from_)
+        moved_widget = self._stack.widget(to) 
+
+        self._stack.removeWidget(moved_widget)
+        self._stack.removeWidget(displaced_widget)
+        
+        self._stack.insertWidget(to, displaced_widget)
+        self._stack.insertWidget(from_, moved_widget)
+        
+        self._stack.setCurrentIndex(self._tab_bar.currentIndex())
+    
     def setCurrentIndex(self, index):
         '''
         Sets the current tab to the specified index.
@@ -182,10 +197,10 @@ class ExtendedTabWidget(QFrame):
         if self._tab_bar is not None:
             raise Exception('Tab bar already set.')
         
-        # Connect the new tab bar.
         self._tab_bar = tab_bar
         tab_bar.currentChanged.connect(self.setCurrentIndex)
         tab_bar.tabCloseRequested.connect(self.closeTab)
+        tab_bar.tabMoved.connect(self._move_tab)
     
     def closeTab(self, index):
         '''
