@@ -3,7 +3,7 @@ recursive-exclude project_explorer/.trash *
 recursive-exclude project_explorer/.projects *
 
 include \
-    project_explorer/theme.css \
+    project_explorer/default_theme.css \
     project_explorer/file_view_icons.json \
     project_explorer/.default_settings.json
 
