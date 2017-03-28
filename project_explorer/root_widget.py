@@ -6,35 +6,32 @@ Tree based file system browser widget for browsing the file tree from a movable 
 '''
 
 import os
+import datetime
+import shutil
+import itertools
 
 from PySide.QtCore import (
     Signal,
-    # QModelIndex,
     Qt,
     QDir,
     QEvent,
-    # QUrl,
-    # QMimeData,
-    # QFileSystemWatcher,
-    # QTimer
+    QUrl,
+    QMimeData,
 )
 
 
 from PySide.QtGui import (
     QLineEdit,
     QSortFilterProxyModel,
-    # QStyledItemDelegate,
     QFrame,
-    # QApplication,
+    QApplication,
     QAction,
     QHBoxLayout,
     QVBoxLayout,
-    # QSplitter,
     QFileSystemModel,
     QTreeView,
     QToolBar,
-    # QMessageBox,
-    # QFileDialog,
+    QMessageBox,
 )
 
 from json_file_icon_provider import JSONFileIconProvider
@@ -636,8 +633,10 @@ class RootWidget(QFrame):
         '''
         Moves all of the currently selected items to the trash directory.
         '''
-        if not os.path.isdir(TRASH_DIRECTORY):
-            os.makedirs(TRASH_DIRECTORY)
+        trash_directory = self._settings['trash_directory']
+        
+        if not os.path.isdir(trash_directory):
+            os.makedirs(trash_directory)
     
         for index in self._view.selectedIndexes():
             path = self._model.filePath(index)
@@ -648,10 +647,10 @@ class RootWidget(QFrame):
             
             if os.path.isdir(path):
                 shutil.copytree(
-                    self._model.filePath(index), os.path.join(TRASH_DIRECTORY, deleted_item_name))
+                    self._model.filePath(index), os.path.join(trash_directory, deleted_item_name))
             elif os.path.isfile(path):
                 shutil.copy2(
-                    self._model.filePath(index), os.path.join(TRASH_DIRECTORY, deleted_item_name))
+                    self._model.filePath(index), os.path.join(trash_directory, deleted_item_name))
             
             self._model.remove(index)
 

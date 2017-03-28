@@ -8,12 +8,7 @@ A project based file explorer.
 import os
 import sys
 import shutil
-import datetime
-import glob
-import itertools
 import ctypes
-import json
-import shutil
 
 from PySide.QtCore import (
     Signal,
