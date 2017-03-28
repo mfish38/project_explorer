@@ -2,6 +2,8 @@
 //
 // All settings are re-applied when this file is modified. If this file is deleted, then it will be
 // recreated with the default settings.
+//
+// Relative paths will be interpreted as relative to the installation.
 
 {
 
@@ -9,6 +11,12 @@
 "filter_extensions" : [
     ".pyc"
 ],
+
+// Directory to store trash in.
+"trash_directory" : ".trash",
+
+// Directory to store projects in.
+"projects_directory" : ".projects",
 
 // Path to the theme file to use.
 "theme" : "default_theme.css"

@@ -43,8 +43,6 @@ from extended_tabs import ExtendedTabBar, ExtendedTabWidget
 import extended_json
 from root_widget import RootWidget
 
-TRASH_DIRECTORY = '.trash'
-PROJECTS_DIRECTORY = '.projects'
 SETTINGS_PATH = '.settings.json'
 DEFAULT_SETTINGS_PATH = '.default_settings.json'
 
@@ -131,10 +129,12 @@ class Project(QFrame):
         '''
         Opens a new project root that views the trash directory.
         '''
-        if not os.path.isdir(TRASH_DIRECTORY):
-            os.makedirs(TRASH_DIRECTORY)
+        trash_directory = self._settings['trash_directory']
+        
+        if not os.path.isdir(trash_directory):
+            os.makedirs(trash_directory)
 
-        self.add_root(path=TRASH_DIRECTORY)
+        self.add_root(path=trash_directory)
 
     def handle_close_request(self):
         '''
@@ -153,11 +153,13 @@ class Project(QFrame):
             
             [[list of root paths], [list of root widget sizes]]
         '''
-        if not os.path.isdir(PROJECTS_DIRECTORY):
-            os.makedirs(PROJECTS_DIRECTORY)
+        projects_directory = self._settings['projects_directory']
+        
+        if not os.path.isdir(projects_directory):
+            os.makedirs(projects_directory)
         
         path, filter = QFileDialog.getSaveFileName(
-            self, 'Save Project', os.path.join(PROJECTS_DIRECTORY, self._name))
+            self, 'Save Project', os.path.join(projects_directory, self._name))
         
         if path == '' and filter == '':
             return
@@ -299,11 +301,13 @@ class ProjectExplorer(QFrame):
         '''
         Opens a saved project.
         '''
-        if not os.path.isdir(PROJECTS_DIRECTORY):
-            os.makedirs(PROJECTS_DIRECTORY)
+        projects_directory = self._settings['projects_directory']
+        
+        if not os.path.isdir(projects_directory):
+            os.makedirs(projects_directory)
             
         path, filter = QFileDialog.getOpenFileName(
-            self, 'Open Project', os.path.join(PROJECTS_DIRECTORY))
+            self, 'Open Project', os.path.join(projects_directory))
         
         if path == '' and filter == '':
             return
