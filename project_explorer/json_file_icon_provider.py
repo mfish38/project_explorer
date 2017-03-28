@@ -8,12 +8,8 @@ using a JSON settings file.
 The format of the JSON file should be:
 
 {
-    "fonts_to_load" : [
-        "<font path>"
-    ],
-    
     "types" : {
-        "Computer" : ["<FontFamily>", "<icon text>"],
+        "Computer" : "<icon path>",
         "Desktop"  : "<icon path>",
         "Trashcan" : "<icon path>",
         "Network"  : "<icon path>",
@@ -21,26 +17,23 @@ The format of the JSON file should be:
         "Folder"   : "<icon path>",
         "File"     : "<icon path>"
     },
-    
+
     "filenames" : {
-        "LICENSE" : ["<FontFamily>", "<icon text>"],
+        "LICENSE" : "<icon path>",
         "README.md" : "<icon path>",
         <etc...>
     },
-    
+
     "extensions" : {
-        "txt" : ["<FontFamily>", "<icon text>"],
+        "txt" : "<icon path>",
         "jpg" : "<icon path>",
         <etc...>
     },
-    
+
     "file_default" : "<icon path>"
 }
 
-Note that null can be given for any path to not specify an icon. In all cases, either an icon path
-can be given, or a font family and icon text. All font families must be system fonts, or in a font
-loaded with "fonts_to_load". The icon text can be either a ligature or a hex value escaped like:
-"\uFFFF".
+Note that null can be given for any path to not specify an icon.
 
 Comments of the // form are allowed.
 
@@ -50,10 +43,9 @@ Filenames settings override extension settings.
 import os
 
 from PySide.QtCore import QFileInfo
-from PySide.QtGui import QFileIconProvider, QIcon, QFontDatabase, QFont
+from PySide.QtGui import QFileIconProvider, QIcon
 
 import extended_json
-from font_icon import FontIcon
 
 class JSONFileIconProvider(QFileIconProvider):
     '''
@@ -65,37 +57,21 @@ class JSONFileIconProvider(QFileIconProvider):
             The path to the JSON file containing the paths to the icons to use.
         '''
         super(JSONFileIconProvider, self).__init__()
-        
+
         settings = extended_json.load_file(path)
-        
-        # Get the font families to load.
-        fonts_to_load = settings['fonts_to_load']
-        
-        # Load the fonts.
-        for font_path in fonts_to_load:
-            QFontDatabase.addApplicationFont(font_path)
-        
+
         # Icon cache for load_icon().
         icons = {}
-        
+
         def load_icon(icon_specifier):
             '''
             Loads (with caching) the icon specified by the given specifier.
             '''
             if isinstance(icon_specifier, basestring):
                 icon_specifier = os.path.normcase(os.path.abspath(icon_specifier))
-                
+
                 if icon_specifier not in icons:
                     icon = QIcon(icon_specifier)
-                    icons[icon_specifier] = icon
-                else:
-                    icon = icons[icon_specifier]
-            elif isinstance(icon_specifier, list):
-                icon_specifier = tuple(icon_specifier)
-                
-                if icon_specifier not in icons:
-                    font_family, icon_text = icon_specifier
-                    icon = FontIcon(QFont(font_family), icon_text)
                     icons[icon_specifier] = icon
                 else:
                     icon = icons[icon_specifier]
@@ -107,9 +83,9 @@ class JSONFileIconProvider(QFileIconProvider):
                     icon = icons[icon_specifier]
             else:
                 raise Exception('Unsuported icon specifier: {}.'.format(icon_specifier))
-             
+
             return icon
-        
+
         # Map JSON keys to QFileIconProvider file types.
         type_map = {
             'Computer' : QFileIconProvider.Computer,
@@ -120,45 +96,44 @@ class JSONFileIconProvider(QFileIconProvider):
             'Folder'   : QFileIconProvider.Folder,
             'File'     : QFileIconProvider.File
         }
-        
+
         self._type_icons = {}
         for type_name, icon_specifier in settings['types'].iteritems():
-            self._type_icons[type_map[type_name]] = load_icon(icon_specifier)        
-            
+            self._type_icons[type_map[type_name]] = load_icon(icon_specifier)
+
         self._filename_icons = {}
         for filename, icon_specifier in settings['filenames'].iteritems():
-            self._filename_icons[filename] = load_icon(icon_specifier)      
-            
+            self._filename_icons[filename] = load_icon(icon_specifier)
+
         self._extension_icons = {}
         for extension, icon_specifier in settings['extensions'].iteritems():
             self._extension_icons[extension] = load_icon(icon_specifier)
-        
+
         self._file_default_icon = load_icon(settings['file_default'])
-    
+
     def icon(self, type_or_info):
         '''
         Returns the icon to use for the given file info or type.
-        
+
         type_or_info
             Either a QFileIconProvider type enumeration, or a QFileInfo object.
         '''
         if isinstance(type_or_info, QFileInfo):
-            # called icon(info)           
+            # called icon(info)
             if type_or_info.isFile():
                 try:
                     return self._filename_icons[type_or_info.fileName()]
                 except KeyError:
                     pass
-            
+
                 try:
                     return self._extension_icons[type_or_info.suffix()]
                 except KeyError:
                     pass
-                    
+
                 return self._file_default_icon
 
             return QIcon()
         else:
             # called icon(type)
             return self._type_icons.get(type_or_info, QIcon())
-            
