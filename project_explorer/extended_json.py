@@ -13,28 +13,28 @@ _COMMENT_REGEX = re.compile(r'//.*$', flags=re.MULTILINE)
 def loads(json_text):
     '''
     Parses the JSON data in the given string.
-    
+
     Extends json.loads() to:
         - Support line comments of the form "//".
     '''
     # Remove comments.
     json_text = _COMMENT_REGEX.sub('', json_text)
-    
+
     # Parse the JSON.
     data = json.loads(json_text)
-    
+
     return data
 
-def load(file):
+def load(file_):
     '''
     Parses JSON from the given file object.
-    
+
     Extends json.load() by using this module's loads() instead.
     '''
-    json_text = file.read()
-    
+    json_text = file_.read()
+
     return loads(json_text)
-    
+
 def load_file(path):
     '''
     Loads the json file at the given path.
