@@ -7,7 +7,7 @@ Each tab represents a different project, and each project can have multiple root
 
 ## Installation
 
-Currently only developed for Windows and requires Python 2.7.
+Currently developed for Windows and requires Python 2.7.
 
 Install with pip:
 
