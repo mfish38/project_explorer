@@ -1,4 +1,8 @@
 
+include \
+    LICENSE \
+    THIRD_PARTY_NOTICES.txt
+
 recursive-exclude project_explorer/.trash *
 recursive-exclude project_explorer/.projects *
 
