@@ -7,12 +7,20 @@ Each tab represents a different project, and each project can have multiple root
 
 ## Installation
 
-Currently requires Python 2.7.
+Currently only developed for Windows and requires Python 2.7.
 
 Install with pip:
 
 ```bash
 pip install project_explorer
+```
+
+## Running
+
+To create a Windows desktop shortcut, Right Click->New->Shortcut and set the location to:
+
+```
+pythonw.exe -m project_explorer.project_explorer
 ```
 
 ## Keyboard Shortcuts
