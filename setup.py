@@ -9,6 +9,9 @@ setup(
     author='Mark Fisher',
     license='MIT',
     packages=['project_explorer'],
+    install_requires=[
+        'PySide',
+    ],
     include_package_data=True,
     zip_safe=False)
     
