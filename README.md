@@ -5,6 +5,16 @@ A simple file browser that uses project based concepts.
 
 Each tab represents a different project, and each project can have multiple roots open. A root is a folder that needs to be viewed to work on the project.
 
+## Installation
+
+Currently requires Python 2.7.
+
+Install with pip:
+
+```bash
+pip install project_explorer
+```
+
 ## Keyboard Shortcuts
 
 | Action               | Keys                            |
