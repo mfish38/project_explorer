@@ -27,6 +27,7 @@ pythonw.exe -m project_explorer.project_explorer
 
 | Action               | Keys                            |
 | -------------------- | ------------------------------- |
+| Autocomplete Path    | <kbd>Tab</kbd>                  |
 | Copy File/Directory  | <kbd>Ctrl</kbd>+<kbd>C</kbd>    |
 | Paste File/Directory | <kbd>Ctrl</kbd>+<kbd>V</kbd>    |
 | Trash Selected       | <kbd>Del</kbd>                  |
