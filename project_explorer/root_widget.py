@@ -616,6 +616,11 @@ class RootWidget(QFrame):
         '''
         Deletes all of the currently selected items.
         '''
+        selected_indexes = self._view.selectedIndexes()
+        
+        if len(selected_indexes) == 0:
+            return
+        
         selection = QMessageBox.warning(
             self,
             'Delete',
@@ -625,7 +630,7 @@ class RootWidget(QFrame):
         if selection != QMessageBox.Yes:
             return
 
-        for index in self._view.selectedIndexes():
+        for index in selected_indexes:
             self._model.remove(index)
 
     def _trash_selected(self):
