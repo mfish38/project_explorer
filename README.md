@@ -5,10 +5,6 @@ Each tab represents a different project, and each project can have multiple root
 
 ![alt text](images/screenshot_1.png "Screenshot")
 
-| Icon | Action |
-| ---- | ------ |
-| ![alt text](project_explorer/icons/material-design-icons/action/drawable-xxxhdpi/ic_open_in_browser_black_18dp.png "Open Project") | Open Project |
-
 ## Installation
 
 Currently developed for Windows and requires Python 2.7.
