@@ -181,12 +181,6 @@ class ExtendedTabWidget(QFrame):
 
         self._stack.setCurrentIndex(self._tab_bar.currentIndex())
 
-    def setCurrentIndex(self, index):
-        '''
-        Sets the current tab to the specified index.
-        '''
-        self._stack.setCurrentIndex(index)
-
     def setTabBar(self, tab_bar):
         '''
         Sets the tab bar that will be used to switch between tabs.
@@ -198,7 +192,7 @@ class ExtendedTabWidget(QFrame):
             raise Exception('Tab bar already set.')
 
         self._tab_bar = tab_bar
-        tab_bar.currentChanged.connect(self.setCurrentIndex)
+        tab_bar.currentChanged.connect(self._stack.setCurrentIndex)
         tab_bar.tabCloseRequested.connect(self.closeTab)
         tab_bar.tabMoved.connect(self._move_tab)
 
@@ -215,6 +209,8 @@ class ExtendedTabWidget(QFrame):
         self._stack.removeWidget(widget)
 
         widget.deleteLater()
+
+        self._stack.setCurrentIndex(self._tab_bar.currentIndex())
 
     def addTab(self, widget, label):
         '''
