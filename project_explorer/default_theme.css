@@ -93,6 +93,10 @@ RootWidget QTreeView {
     background: #333333;
 }
 
+RootWidget QTreeView QLineEdit {
+    border: none;
+}
+
 RootWidget QTreeView::item {
     color: #BBBBBB;
 }
