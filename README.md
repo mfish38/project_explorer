@@ -1,9 +1,12 @@
 # project_explorer
 A simple file browser that uses project based concepts.
 
+Each tab represents a different project, and each project can have multiple roots open. A root is a folder that needs to be viewed to work on the project.
+
 ![alt text](images/screenshot_1.png "Screenshot")
 
-Each tab represents a different project, and each project can have multiple roots open. A root is a folder that needs to be viewed to work on the project.
+| Icon | Action |
+| ![alt text](icons/material-design-icons/action/drawable-xxxhdpi/ic_open_in_browser_black_18dp.png "Open Project") | Open Project |
 
 ## Installation
 
