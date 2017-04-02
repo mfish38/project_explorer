@@ -39,7 +39,7 @@
         "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}"
     },
     {
-        "label"   : "Diff With HEAD",
+        "label"   : "Git Diff",
         "command" : "cmd /C start cmd /K git diff {0}"
     },
     {
