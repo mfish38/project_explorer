@@ -9,6 +9,8 @@ import os
 import datetime
 import shutil
 import itertools
+import subprocess
+import string
 
 from PySide.QtCore import (
     Signal,
@@ -17,6 +19,7 @@ from PySide.QtCore import (
     QEvent,
     QUrl,
     QMimeData,
+    QObject,
 )
 
 from PySide.QtGui import (
@@ -31,6 +34,7 @@ from PySide.QtGui import (
     QTreeView,
     QToolBar,
     QMessageBox,
+    QMenu,
 )
 
 from json_file_icon_provider import JSONFileIconProvider
@@ -355,6 +359,23 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         else:
             return False
 
+class SubprocessAction(QAction):
+    '''
+    An action that executes a command when triggered.
+    '''
+    def __init__(self, *args, **kwargs):
+        super(SubprocessAction, self).__init__(*args, **kwargs)
+        
+        self.command = None
+        
+        self.triggered.connect(self.execute)
+    
+    def execute(self):
+        '''
+        Executes the actions command.
+        '''
+        subprocess.Popen(self.command)
+        
 class RootWidget(QFrame):
     '''
     This widget provides a view of a project root.
@@ -400,6 +421,10 @@ class RootWidget(QFrame):
         self._view.setEditTriggers(
             QTreeView.SelectedClicked | QTreeView.EditKeyPressed)
 
+        # setup the context menu
+        self._view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self._view.customContextMenuRequested.connect(self._context_menu)
+        
         # --- setup the current root path label ---
         self._root_edit = RootEdit(self._model, self._view)
         self._root_edit.new_root.connect(self._set_root_path)
@@ -443,7 +468,78 @@ class RootWidget(QFrame):
         self._settings = None
         self.update_settings(settings)
 
+    def _context_menu(self, point):
+        '''
+        Opens a context menu generated from the user settings.
+        '''
+        menu_item_settings = self._settings['context_menu']
+        
+        # Don't do anything if there are no defined menu items.
+        if len(menu_item_settings) == 0:
+            return
+        
+        # Get all the selected file paths.
+        individual_items = [
+            '"{}"'.format(self._model.filePath(index))
+            for index in self._view.selectedIndexes()
+        ]
+        
+        # Create a space separated list of all the selected file paths.
+        selection_list = ' '.join(individual_items)
+        
+        # Create the menu.
+        menu = QMenu(self)
+        for menu_item_setting in menu_item_settings:
+            action = SubprocessAction(menu_item_setting['label'], self)
+            menu.addAction(action)
+            
+            # Disable the menu item if there is nothing selected.
+            if len(individual_items) == 0:
+                action.setEnabled(False)
+                continue
+            
+            command = menu_item_setting['command']
+            
+            # Get the highest field number in the command string.
+            highest_field_number = None
+            for parse_record in string.Formatter().parse(command):
+                field_name = parse_record[1]
+                
+                try:
+                    field_number = int(field_name)
+                except ValueError:
+                    pass
+                else:
+                    if highest_field_number is None or field_number > highest_field_number:
+                        highest_field_number = field_number
+            
+            # If field numbers were used, then the menu item will be disabled if the number of
+            # selected items does not equal the highest field number + 1.
+            if (
+                    highest_field_number is not None
+                    and len(individual_items) != highest_field_number + 1
+                ):
+                action.setEnabled(False)
+                continue
+            
+            # Set the menu item command. The item will be disabled if there is a field in the
+            # command string that is not supported.
+            try:
+                command = menu_item_setting['command'].format(
+                    *individual_items,
+                    selected=selection_list)
+            except KeyError:
+                action.setEnabled(False)
+            else:
+                action.command = command
+        
+        # Show the menu.
+        menu.popup(self._view.mapToGlobal(point))
+
     def update_settings(self, new_settings):
+        '''
+        Updates the settings.
+        '''
         self._settings = new_settings
 
         self._model.filter_extensions(new_settings['filter_extensions'])
