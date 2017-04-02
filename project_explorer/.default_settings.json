@@ -27,7 +27,11 @@
     // {
     //     "label"   : "Diff Selected",
     //     "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}"
-    // }
+    // },
+    {
+        "label"   : "Diff With Head",
+        "command" : "cmd /C start cmd /K git diff {0}"
+    }
 ],
 
 // Directory to store trash in.
