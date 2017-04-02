@@ -14,9 +14,10 @@
 
 // Selected items context menu.
 // This should be a list of dictionaries, where each dictionary can have:
-//      - label
+//      - label (required)
 //          The text to show in the context menu.
-//      - command
+//
+//      - command (required)
 //          The command string to execute when the menu item is selected.
 //
 //          In this string, {0}, {1}, etc... can be used and will be replaced with the first,
@@ -29,7 +30,17 @@
 //          {current_directory} will be replaced with the directory containing the current item, or
 //          the current item if it is a directory. If there is no current item, the menu item will
 //          be disabled.
+//
+//      - extensions
+//          A list of extensions (including the dot). If this is specified then the menu item will
+//          be disabled if any of the selected items is not a file that has an extension in this
+//          list.
 "context_menu" : [
+    {
+        "label"      : "Run",
+        "command"    : "cmd /C start cmd /C \"python {0}\"",
+        "extensions" : [".py"]
+    },
     {
         "label"   : "Shell Here",
         "command" : "cmd /C start cmd /K \"cd /d {current_directory}\""

@@ -479,13 +479,7 @@ class RootWidget(QFrame):
             return
         
         # Get all the selected file paths.
-        individual_items = [
-            '"{}"'.format(self._model.filePath(index))
-            for index in self._view.selectedIndexes()
-        ]
-        
-        # Create a space separated list of all the selected file paths.
-        selection_list = ' '.join(individual_items)
+        selected_items = [self._model.filePath(index) for index in self._view.selectedIndexes()]
         
         # Create the menu.
         menu = QMenu(self)
@@ -517,13 +511,13 @@ class RootWidget(QFrame):
             # selected items does not equal the highest field number + 1.
             if (
                     highest_field_number is not None
-                    and len(individual_items) != highest_field_number + 1
+                    and len(selected_items) != highest_field_number + 1
                 ):
                 action.setEnabled(False)
                 continue
             
             # Disable the menu item if the command uses {selected}, but there is nothing selected.
-            if 'selected' in field_names and len(individual_items) == 0:
+            if 'selected' in field_names and len(selected_items) == 0:
                 action.setEnabled(False)
                 continue
             
@@ -533,13 +527,29 @@ class RootWidget(QFrame):
             if 'current_directory' in field_names and current_directory is None:
                 action.setEnabled(False)
                 continue
+                
+            # Disable the menu item if an extensions list is specified, and one of the selected
+            # items is not a file with an extension in the list.
+            try:
+                extensions = menu_item_setting['extensions']
+            except KeyError:
+                pass
+            else:
+                extensions = set(extensions)
+                
+                for path in selected_items:
+                    if not os.path.isfile(path) or os.path.splitext(path)[1] not in extensions:
+                        action.setEnabled(False)
+                        continue
             
             # Set the menu item command. The item will be disabled if there is a field in the
             # command string that is not supported.
+            escaped_items = ['"{}"'.format(item) for item in selected_items]
+            selected = ' '.join(escaped_items)
             try:
                 command = menu_item_setting['command'].format(
-                    *individual_items,
-                    selected=selection_list,
+                    *escaped_items,
+                    selected=selected,
                     current_directory=self.current_directory())
             except KeyError:
                 action.setEnabled(False)
