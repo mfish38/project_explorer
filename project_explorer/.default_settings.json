@@ -30,10 +30,14 @@
 //          the current item if it is a directory. If there is no current item, the menu item will
 //          be disabled.
 "context_menu" : [
-    // {
-    //     "label"   : "Diff Selected",
-    //     "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}"
-    // },
+    {
+        "label"   : "Shell Here",
+        "command" : "cmd /C start cmd /K \"cd /d {current_directory}\""
+    },
+    {
+        "label"   : "Diff Selected",
+        "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}"
+    },
     {
         "label"   : "Diff With Head",
         "command" : "cmd /C start cmd /K git diff {0}"
