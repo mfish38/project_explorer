@@ -25,7 +25,7 @@
 //          a reference that does not exist (i.e. {foo}), the menu item will be disabled.
 "context_menu" : [
     // {
-    //     "label"   :"Diff Selected",
+    //     "label"   : "Diff Selected",
     //     "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}"
     // }
 ],
