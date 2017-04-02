@@ -493,17 +493,14 @@ class RootWidget(QFrame):
             action = SubprocessAction(menu_item_setting['label'], self)
             menu.addAction(action)
             
-            # Disable the menu item if there is nothing selected.
-            if len(individual_items) == 0:
-                action.setEnabled(False)
-                continue
-            
             command = menu_item_setting['command']
             
-            # Get the highest field number in the command string.
+            # Get the highest field number in the command string, as well as a set of field names.
+            field_names = set()
             highest_field_number = None
             for parse_record in string.Formatter().parse(command):
                 field_name = parse_record[1]
+                field_names.add(field_name)
                 
                 try:
                     field_number = int(field_name)
@@ -522,12 +519,25 @@ class RootWidget(QFrame):
                 action.setEnabled(False)
                 continue
             
+            # Disable the menu item if the command uses {selected}, but there is nothing selected.
+            if 'selected' in field_names and len(individual_items) == 0:
+                action.setEnabled(False)
+                continue
+            
+            # Disable the menu item if the command uses {current_directory}, but there is no current
+            # directory.
+            current_directory=self.current_directory()
+            if 'current_directory' in field_names and current_directory is None:
+                action.setEnabled(False)
+                continue
+            
             # Set the menu item command. The item will be disabled if there is a field in the
             # command string that is not supported.
             try:
                 command = menu_item_setting['command'].format(
                     *individual_items,
-                    selected=selection_list)
+                    selected=selection_list,
+                    current_directory=self.current_directory())
             except KeyError:
                 action.setEnabled(False)
             else:
@@ -640,7 +650,12 @@ class RootWidget(QFrame):
         '''
         Returns the directory containing the currently selected item.
         '''
-        active_path = self._model.filePath(self._view.currentIndex())
+        current_index = self._view.currentIndex()
+        
+        if not current_index.isValid():
+            return None
+        
+        active_path = self._model.filePath(current_index)
 
         return os.path.dirname(active_path)
 
@@ -649,7 +664,12 @@ class RootWidget(QFrame):
         Returns the directory containing the currently selected item, or the item if it is a
         directory.
         '''
-        active_path = self._model.filePath(self._view.currentIndex())
+        current_index = self._view.currentIndex()
+        
+        if not current_index.isValid():
+            return None
+            
+        active_path = self._model.filePath(current_index)
 
         if os.path.isdir(active_path):
             directory = active_path

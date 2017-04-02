@@ -17,12 +17,18 @@
 //      - label
 //          The text to show in the context menu.
 //      - command
-//          The command string to execute when the menu item is selected. In this string, {0}, {1},
-//          etc... can be used and will be replaced with the first, second, and so on file paths.
-//          {selected} can also be used, and will be replaced with the full list of selected paths.
-//          These paths will all be space separated and quoted in double quotes. If no paths are
-//          selected, the number of selected paths differs from the highest path reference + 1, or
-//          a reference that does not exist (i.e. {foo}), the menu item will be disabled.
+//          The command string to execute when the menu item is selected.
+//
+//          In this string, {0}, {1}, etc... can be used and will be replaced with the first,
+//          second, and so on file paths. If no paths the number of selected paths differs from the
+//          highest path reference + 1, the menu item will be disabled.
+//
+//          {selected} will be replaced with the full list of selected paths. If this is specified,
+//          and there are no selected items, then the menu item will be disabled.
+//
+//          {current_directory} will be replaced with the directory containing the current item, or
+//          the current item if it is a directory. If there is no current item, the menu item will
+//          be disabled.
 "context_menu" : [
     // {
     //     "label"   : "Diff Selected",
@@ -31,6 +37,10 @@
     {
         "label"   : "Diff With Head",
         "command" : "cmd /C start cmd /K git diff {0}"
+    },
+    {
+        "label"   : "Git Status",
+        "command" : "cmd /C start cmd /K git status {current_directory}"
     }
 ],
 
