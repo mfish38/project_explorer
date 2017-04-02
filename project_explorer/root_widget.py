@@ -500,6 +500,9 @@ class RootWidget(QFrame):
             highest_field_number = None
             for parse_record in string.Formatter().parse(command):
                 field_name = parse_record[1]
+                if field_name is None:
+                    continue
+                
                 field_names.add(field_name)
                 
                 try:
