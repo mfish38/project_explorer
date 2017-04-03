@@ -35,11 +35,15 @@
 //          A list of extensions (including the dot). If this is specified then the menu item will
 //          be disabled if any of the selected items is not a file that has an extension in this
 //          list.
+//
+//      - hide_if_disabled
+//          If specified and true, then the menu item will not be visible if it is disabled.
 "context_menu" : [
     {
-        "label"      : "Run",
-        "command"    : "cmd /C start cmd /C \"python {0}\"",
-        "extensions" : [".py"]
+        "label"            : "Run",
+        "command"          : "cmd /C start cmd /C \"python {0}\"",
+        "extensions"       : [".py"],
+        "hide_if_disabled" : true
     },
     {
         "label"   : "Shell Here",

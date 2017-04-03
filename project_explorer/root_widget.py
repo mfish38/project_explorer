@@ -481,12 +481,12 @@ class RootWidget(QFrame):
         # Get all the selected file paths.
         selected_items = [self._model.filePath(index) for index in self._view.selectedIndexes()]
         
+        # Get the current directory the user is in.
+        current_directory=self.current_directory()
+        
         # Create the menu.
         menu = QMenu(self)
         for menu_item_setting in menu_item_settings:
-            action = SubprocessAction(menu_item_setting['label'], self)
-            menu.addAction(action)
-            
             command = menu_item_setting['command']
             
             # Get the highest field number in the command string, as well as a set of field names.
@@ -507,40 +507,50 @@ class RootWidget(QFrame):
                     if highest_field_number is None or field_number > highest_field_number:
                         highest_field_number = field_number
             
-            # If field numbers were used, then the menu item will be disabled if the number of
-            # selected items does not equal the highest field number + 1.
+            
+            # Check if the menu item should be disabled.
+            enabled = True
             if (
                     highest_field_number is not None
                     and len(selected_items) != highest_field_number + 1
                 ):
-                action.setEnabled(False)
-                continue
-            
-            # Disable the menu item if the command uses {selected}, but there is nothing selected.
-            if 'selected' in field_names and len(selected_items) == 0:
-                action.setEnabled(False)
-                continue
-            
-            # Disable the menu item if the command uses {current_directory}, but there is no current
-            # directory.
-            current_directory=self.current_directory()
-            if 'current_directory' in field_names and current_directory is None:
-                action.setEnabled(False)
-                continue
-                
-            # Disable the menu item if an extensions list is specified, and one of the selected
-            # items is not a file with an extension in the list.
-            try:
-                extensions = menu_item_setting['extensions']
-            except KeyError:
-                pass
+                # If field numbers were used, then the menu item will be disabled if the number of
+                # selected items does not equal the highest field number + 1.
+                enabled = False
+            elif 'selected' in field_names and len(selected_items) == 0:
+                # Disable the menu item if the command uses {selected}, but there is nothing
+                # selected.
+                enabled = False
+            elif 'current_directory' in field_names and current_directory is None:
+                # Disable the menu item if the command uses {current_directory}, but there is no
+                # current directory.
+                enabled = False
             else:
-                extensions = set(extensions)
-                
-                for path in selected_items:
-                    if not os.path.isfile(path) or os.path.splitext(path)[1] not in extensions:
-                        action.setEnabled(False)
-                        continue
+                # Disable the menu item if an extensions list is specified, and one of the selected
+                # items is not a file with an extension in the list.
+                try:
+                    extensions = menu_item_setting['extensions']
+                except KeyError:
+                    pass
+                else:
+                    extensions = set(extensions)
+                    
+                    for path in selected_items:
+                        if not os.path.isfile(path) or os.path.splitext(path)[1] not in extensions:
+                            enabled = False
+                            break
+            
+            if not enabled:
+                # On create a menu item if it is not specified to hide the item.
+                if not menu_item_setting.get('hide_if_disabled', False):
+                    action = SubprocessAction(menu_item_setting['label'], self)
+                    menu.addAction(action)
+                    
+                # No need to setup the action command if it is disabled.
+                continue
+            
+            action = SubprocessAction(menu_item_setting['label'], self)
+            menu.addAction(action)
             
             # Set the menu item command. The item will be disabled if there is a field in the
             # command string that is not supported.
@@ -550,7 +560,7 @@ class RootWidget(QFrame):
                 command = menu_item_setting['command'].format(
                     *escaped_items,
                     selected=selected,
-                    current_directory=self.current_directory())
+                    current_directory=current_directory)
             except KeyError:
                 action.setEnabled(False)
             else:
