@@ -374,7 +374,12 @@ class SubprocessAction(QAction):
         '''
         Executes the actions command.
         '''
-        subprocess.Popen(self.command)
+        # Prevent CMD window from flashing on screen.
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE
+        
+        subprocess.Popen(self.command, startupinfo=startupinfo)
         
 class RootWidget(QFrame):
     '''
