@@ -482,7 +482,7 @@ class RootWidget(QFrame):
         selected_items = [self._model.filePath(index) for index in self._view.selectedIndexes()]
         
         # Get the current directory the user is in.
-        current_directory=self.current_directory()
+        current_directory = self.current_directory()
         
         # Create the menu.
         menu = QMenu(self)
@@ -506,7 +506,6 @@ class RootWidget(QFrame):
                 else:
                     if highest_field_number is None or field_number > highest_field_number:
                         highest_field_number = field_number
-            
             
             # Check if the menu item should be disabled.
             enabled = True
@@ -544,6 +543,7 @@ class RootWidget(QFrame):
                 # On create a menu item if it is not specified to hide the item.
                 if not menu_item_setting.get('hide_if_disabled', False):
                     action = SubprocessAction(menu_item_setting['label'], self)
+                    action.setEnabled(False)
                     menu.addAction(action)
                     
                 # No need to setup the action command if it is disabled.
