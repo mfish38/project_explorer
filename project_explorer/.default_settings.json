@@ -12,6 +12,14 @@
     ".pyc"
 ],
 
+// Open with settings that override the system settings.
+// This should be a dictionary keyed by extension (including .), with the command to run as the
+// value. In this command string {path} will be replaced with the path of the file that is being
+// opened.
+"open_with" : {
+    //".py" : "C:/Program Files (x86)/Notepad++/notepad++.exe {path}"
+},
+
 // Selected items context menu.
 // This should be a list of dictionaries, where each dictionary can have:
 //      - label (required)
@@ -47,7 +55,7 @@
     },
     {
         "label"   : "Shell Here",
-        "command" : "cmd /C start cmd /K \"cd /d {current_directory}\""
+        "command" : "cmd /c start cmd /k \"cd /d {current_directory}\""
     },
     {
         "label"   : "Diff Selected",

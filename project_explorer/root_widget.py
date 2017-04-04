@@ -361,6 +361,17 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         else:
             return False
 
+def _launch(command):
+    '''
+    Launches a program using the given command.
+    '''
+    # Prevent CMD window from flashing on screen.
+    startupinfo = subprocess.STARTUPINFO()
+    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    startupinfo.wShowWindow = subprocess.SW_HIDE
+    
+    subprocess.Popen(command, startupinfo=startupinfo)
+    
 class SubprocessAction(QAction):
     '''
     An action that executes a command when triggered.
@@ -376,12 +387,7 @@ class SubprocessAction(QAction):
         '''
         Executes the actions command.
         '''
-        # Prevent CMD window from flashing on screen.
-        startupinfo = subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        startupinfo.wShowWindow = subprocess.SW_HIDE
-        
-        subprocess.Popen(self.command, startupinfo=startupinfo)
+        _launch(self.command)
 
 class RootWidget(QFrame):
     '''
@@ -820,7 +826,14 @@ class RootWidget(QFrame):
         Opens the file with the associated model index.
         '''
         path = self._model.filePath(index)
-        os.startfile(path)
+        _, extension = os.path.splitext(path)
+        
+        try:
+            open_with = self._settings['open_with'][extension]
+        except KeyError:
+            os.startfile(path)
+        else:
+            _launch(open_with.format(path=path))
 
     def _set_root_path(self, path):
         '''
