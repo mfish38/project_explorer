@@ -52,14 +52,6 @@
     {
         "label"   : "Diff Selected",
         "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}"
-    },
-    {
-        "label"   : "Git Diff",
-        "command" : "cmd /C start cmd /K git diff {0}"
-    },
-    {
-        "label"   : "Git Status",
-        "command" : "cmd /C start cmd /K git status {current_directory}"
     }
 ],
 
