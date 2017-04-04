@@ -265,6 +265,8 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         super(FileSystemProxyModel, self).__init__()
 
         self.rowsInserted.connect(self.invalidate)
+        self.rowsMoved.connect(self.invalidate)
+        self.rowsRemoved.connect(self.invalidate)
         self.dataChanged.connect(self.invalidate)
 
         self._filter_extensions = set()
