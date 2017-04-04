@@ -17,7 +17,7 @@
 // value. In this command string {path} will be replaced with the path of the file that is being
 // opened.
 "open_with" : {
-    //".py" : "C:/Program Files (x86)/Notepad++/notepad++.exe {path}"
+    // ".py" : "C:/Program Files (x86)/Notepad++/notepad++.exe {path}"
 },
 
 // Selected items context menu.
