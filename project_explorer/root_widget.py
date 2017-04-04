@@ -327,18 +327,18 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         Pass through to QFileSystemModel
         '''
         return self.sourceModel().filePath(self.mapToSource(index))
+        
+    def remove(self, index):
+        '''
+        Pass through to QFileSystemModel
+        '''
+        return self.sourceModel().remove(self.mapToSource(index))
 
     def fileName(self, index):
         '''
         Pass through to QFileSystemModel
         '''
         return self.sourceModel().fileName(self.mapToSource(index))
-
-    def remove(self, index):
-        '''
-        Pass through to QFileSystemModel
-        '''
-        self.sourceModel().remove(self.mapToSource(index))
 
     def lessThan(self, left, right):
         '''
@@ -380,7 +380,7 @@ class SubprocessAction(QAction):
         startupinfo.wShowWindow = subprocess.SW_HIDE
         
         subprocess.Popen(self.command, startupinfo=startupinfo)
-        
+
 class RootWidget(QFrame):
     '''
     This widget provides a view of a project root.
