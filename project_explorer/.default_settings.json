@@ -41,7 +41,7 @@
 "context_menu" : [
     {
         "label"            : "Run",
-        "command"          : "cmd /C start cmd /C \"python {0}\"",
+        "command"          : "cmd /c start cmd /k \"cd /d {current_directory} & python {0}\"",
         "extensions"       : [".py"],
         "hide_if_disabled" : true
     },
