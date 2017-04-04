@@ -21,8 +21,8 @@
 //          The command string to execute when the menu item is selected.
 //
 //          In this string, {0}, {1}, etc... can be used and will be replaced with the first,
-//          second, and so on file paths. If no paths the number of selected paths differs from the
-//          highest path reference + 1, the menu item will be disabled.
+//          second, and so on file paths. If the number of selected paths differs from the highest
+//          path reference + 1, the menu item will be disabled.
 //
 //          {selected} will be replaced with the full list of selected paths. If this is specified,
 //          and there are no selected items, then the menu item will be disabled.
