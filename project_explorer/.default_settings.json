@@ -49,13 +49,13 @@
 "context_menu" : [
     {
         "label"            : "Run",
-        "command"          : "cmd /c start cmd /k \"cd /d {current_directory} & python {0}\"",
+        "command"          : "start cmd /k cd /d {current_directory} & python {0}",
         "extensions"       : [".py"],
         "hide_if_disabled" : true
     },
     {
         "label"   : "Shell Here",
-        "command" : "cmd /c start cmd /k \"cd /d {current_directory}\""
+        "command" : "start cmd /k cd /d {current_directory}"
     },
     {
         "label"   : "Diff Selected",

@@ -9,8 +9,8 @@ import os
 import datetime
 import shutil
 import itertools
-import subprocess
 import string
+import subprocess
 
 from PySide.QtCore import (
     Signal,
@@ -361,17 +361,6 @@ class FileSystemProxyModel(QSortFilterProxyModel):
             return True
         else:
             return False
-
-def _launch(command):
-    '''
-    Launches a program using the given command.
-    '''
-    # Prevent CMD window from flashing on screen.
-    startupinfo = subprocess.STARTUPINFO()
-    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-    startupinfo.wShowWindow = subprocess.SW_HIDE
-    
-    subprocess.Popen(command, startupinfo=startupinfo)
     
 class SubprocessAction(QAction):
     '''
@@ -388,7 +377,7 @@ class SubprocessAction(QAction):
         '''
         Executes the actions command.
         '''
-        _launch(self.command)
+        subprocess.Popen(self.command, shell=True)
 
 class RootWidget(QFrame):
     '''
@@ -834,7 +823,8 @@ class RootWidget(QFrame):
         except KeyError:
             os.startfile(path)
         else:
-            _launch(open_with.format(path=path))
+            command = open_with.format(path=path)
+            subprocess.Popen(command, shell=True)
 
     def _set_root_path(self, path):
         '''
