@@ -264,13 +264,10 @@ class FileSystemProxyModel(QSortFilterProxyModel):
     def __init__(self):
         super(FileSystemProxyModel, self).__init__()
 
-        self.rowsInserted.connect(self.invalidate)
-        self.rowsMoved.connect(self.invalidate)
-        self.rowsRemoved.connect(self.invalidate)
-        self.dataChanged.connect(self.invalidate)
+        self.setDynamicSortFilter(True)
 
         self._filter_extensions = set()
-
+    
     def filter_extensions(self, extensions):
         '''
         Sets the model to filter out files with the given extension.
@@ -280,7 +277,7 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         '''
         self._filter_extensions = set(extensions)
 
-        self.invalidate()
+        self.invalidateFilter()
 
     def filterAcceptsRow(self, source_row, source_parent):
         model = self.sourceModel()
@@ -298,9 +295,9 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         '''
         Modify a file system item name.
         '''
-        # Fix issue where setting a name to the same name in a different case causes an error. This
-        # issue is caused by a Qt bug (https://bugreports.qt.io/browse/QTBUG-3570).
-        if role == Qt.EditRole and self.fileName(index).lower() == value.lower():
+        if role == Qt.EditRole:
+            # Fix issue where setting a name to the same name in a different case causes an error.
+            # This issue is caused by a Qt bug (https://bugreports.qt.io/browse/QTBUG-3570).
             try:
                 source = self.filePath(index)
                 os.rename(source, os.path.join(os.path.dirname(source), value))
@@ -310,7 +307,7 @@ class FileSystemProxyModel(QSortFilterProxyModel):
                 self.dataChanged.emit(index, index)
                 return True
         else:
-            return self.sourceModel().setData(self.mapToSource(index), value, role)
+            raise Exception('Unexpected model modification.')
 
     def isDir(self, index):
         '''
@@ -334,7 +331,11 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         '''
         Pass through to QFileSystemModel
         '''
-        return self.sourceModel().remove(self.mapToSource(index))
+        self.setDynamicSortFilter(False)
+        result = self.sourceModel().remove(self.mapToSource(index))
+        self.sort(self.sortOrder())
+        self.setDynamicSortFilter(True)
+        return result
 
     def fileName(self, index):
         '''
