@@ -39,7 +39,7 @@ from PySide.QtGui import (
 
 from json_file_icon_provider import JSONFileIconProvider
 
-PATH_SEPARATOR = '/'
+_PATH_SEPARATOR = '/'
 
 def _valid_split(path):
     '''
@@ -112,7 +112,7 @@ class RootEdit(QLineEdit):
         # Tab complete drive letters
         if len(path) == 1:
             # If the drive letter is valid, then autocomplete it.
-            path = '{}:{}'.format(path, PATH_SEPARATOR)
+            path = '{}:{}'.format(path, _PATH_SEPARATOR)
 
             if os.path.isdir(path):
                 self.setText(path)
@@ -121,7 +121,7 @@ class RootEdit(QLineEdit):
             return
         elif len(path) == 2 and path[1] == ':' and os.path.isdir(path):
             # Add a path separator if tab pressed on a valid drive letter.
-            path += PATH_SEPARATOR
+            path += _PATH_SEPARATOR
 
             self.setText(path)
             self.new_root.emit(path)
@@ -138,7 +138,7 @@ class RootEdit(QLineEdit):
 
         # If there is no tail, then change to the head. This handles "c:/path /" and "c:/path/ /"
         if tail == '':
-            head = _normalize_path(head) + PATH_SEPARATOR
+            head = _normalize_path(head) + _PATH_SEPARATOR
             self.setText(head)
             self.new_root.emit(head)
             return
@@ -158,8 +158,8 @@ class RootEdit(QLineEdit):
                 return
             elif len(possibilities) == 1:
                 # If there is only one possibility then complete using it.
-                completed_path = PATH_SEPARATOR.join([head, possibilities[0]])
-                completed_path = _normalize_path(completed_path) + PATH_SEPARATOR
+                completed_path = _PATH_SEPARATOR.join([head, possibilities[0]])
+                completed_path = _normalize_path(completed_path) + _PATH_SEPARATOR
                 self.setText(completed_path)
                 self.new_root.emit(completed_path)
                 return
@@ -173,7 +173,7 @@ class RootEdit(QLineEdit):
 
         # Cycle through the possibilities.
         try:
-            self.setText(PATH_SEPARATOR.join([head, next(self._tab_suggestions)]))
+            self.setText(_PATH_SEPARATOR.join([head, next(self._tab_suggestions)]))
         except StopIteration:
             # There were no suggestions
             pass
@@ -229,7 +229,7 @@ class RootEdit(QLineEdit):
 
         # Add a separator at the end if the path is not just a drive letter
         if os.path.splitdrive(text)[1] != '':
-            text += PATH_SEPARATOR
+            text += _PATH_SEPARATOR
 
         self.setText(text)
         self.new_root.emit(text)
@@ -242,8 +242,8 @@ class RootEdit(QLineEdit):
 
         if path != '':
             path = _normalize_path(path)
-            if not path.endswith(PATH_SEPARATOR):
-                path += PATH_SEPARATOR
+            if not path.endswith(_PATH_SEPARATOR):
+                path += _PATH_SEPARATOR
 
         self.setText(path)
 
