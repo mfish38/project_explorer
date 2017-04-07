@@ -39,6 +39,8 @@ from PySide.QtGui import (
 
 from json_file_icon_provider import JSONFileIconProvider
 
+PATH_SEPARATOR = '/'
+
 def _valid_split(path):
     '''
     Splits the given path into a valid head, and the basename immediately following it.  The
@@ -78,6 +80,13 @@ def _remove_invalid_basenames(path):
 
     return path
 
+def _normalize_path(path):
+    '''
+    Normalizes a path using os.path.normpath(), os.path.normcase(), and by replacing backslashes
+    with forward slashes.
+    '''
+    return os.path.normcase(os.path.normpath(path)).replace('\\', '/')
+    
 class RootEdit(QLineEdit):
     '''
     This widget displays the current path of a root, and allows the user to edit it.
@@ -103,7 +112,7 @@ class RootEdit(QLineEdit):
         # Tab complete drive letters
         if len(path) == 1:
             # If the drive letter is valid, then autocomplete it.
-            path = '{}:{}'.format(path, os.sep)
+            path = '{}:{}'.format(path, PATH_SEPARATOR)
 
             if os.path.isdir(path):
                 self.setText(path)
@@ -112,7 +121,7 @@ class RootEdit(QLineEdit):
             return
         elif len(path) == 2 and path[1] == ':' and os.path.isdir(path):
             # Add a path separator if tab pressed on a valid drive letter.
-            path += os.sep
+            path += PATH_SEPARATOR
 
             self.setText(path)
             self.new_root.emit(path)
@@ -129,8 +138,7 @@ class RootEdit(QLineEdit):
 
         # If there is no tail, then change to the head. This handles "c:/path /" and "c:/path/ /"
         if tail == '':
-            head = os.path.normcase(os.path.normpath(head))
-            head += os.sep
+            head = _normalize_path(head) + PATH_SEPARATOR
             self.setText(head)
             self.new_root.emit(head)
             return
@@ -139,34 +147,33 @@ class RootEdit(QLineEdit):
         tail = tail.lower()
 
         if self._tab_suggestions is None:
-            possiblities = [name.lower() for name in os.listdir(head)]
-            possiblities = [
+            possibilities = [name.lower() for name in os.listdir(head)]
+            possibilities = [
                 name
-                for name in possiblities
+                for name in possibilities
                 if name.startswith(tail) and os.path.isdir(os.path.join(head, name))]
 
-            if len(possiblities) == 0:
+            if len(possibilities) == 0:
                 # If there are no possibilities, then do nothing.
                 return
-            elif len(possiblities) == 1:
+            elif len(possibilities) == 1:
                 # If there is only one possibility then complete using it.
-                completed_path = os.path.join(head, possiblities[0])
-                completed_path = os.path.normcase(os.path.normpath(completed_path))
-                completed_path += os.sep
+                completed_path = PATH_SEPARATOR.join([head, possibilities[0]])
+                completed_path = _normalize_path(completed_path) + PATH_SEPARATOR
                 self.setText(completed_path)
                 self.new_root.emit(completed_path)
                 return
 
             # Create a loop of suggestions.
-            self._tab_suggestions = itertools.cycle(possiblities)
+            self._tab_suggestions = itertools.cycle(possibilities)
 
             # Advance the suggestions by one if the current tail is the first suggestion.
-            if tail == possiblities[0]:
+            if tail == possibilities[0]:
                 next(self._tab_suggestions)
 
         # Cycle through the possibilities.
         try:
-            self.setText(os.path.join(head, next(self._tab_suggestions)))
+            self.setText(PATH_SEPARATOR.join([head, next(self._tab_suggestions)]))
         except StopIteration:
             # There were no suggestions
             pass
@@ -191,9 +198,8 @@ class RootEdit(QLineEdit):
             return
 
         # Do nothing if the path is already the current root
-        normalized_current_root = os.path.normcase(
-            os.path.normpath(self._model.filePath(self._view.rootIndex())))
-        normalized_text = os.path.normcase(os.path.normpath(text))
+        normalized_current_root = _normalize_path(self._model.filePath(self._view.rootIndex()))
+        normalized_text = _normalize_path(text)
         if normalized_text == normalized_current_root:
             return
 
@@ -219,12 +225,11 @@ class RootEdit(QLineEdit):
                     text = os.path.dirname(text)
 
         # Normalize the path
-        text = os.path.normcase(os.path.normpath(text))
+        text = _normalize_path(text)
 
-        # Add a separator at the end if the path is not just a drive letter and the path does not
-        # already end in a separator.
-        if os.path.splitdrive(text)[1] != '' and not text.endswith(os.sep):
-            text += os.sep
+        # Add a separator at the end if the path is not just a drive letter
+        if os.path.splitdrive(text)[1] != '':
+            text += PATH_SEPARATOR
 
         self.setText(text)
         self.new_root.emit(text)
@@ -236,9 +241,9 @@ class RootEdit(QLineEdit):
         path = self._model.filePath(self._view.rootIndex())
 
         if path != '':
-            path = os.path.normcase(os.path.normpath(path))
-            if not path.endswith(os.sep):
-                path += os.sep
+            path = _normalize_path(path)
+            if not path.endswith(PATH_SEPARATOR):
+                path += PATH_SEPARATOR
 
         self.setText(path)
 
@@ -483,7 +488,7 @@ class RootWidget(QFrame):
         
         # Get all the selected file paths.
         selected_items = [self._model.filePath(index) for index in self._view.selectedIndexes()]
-        
+
         # Get the current directory the user is in.
         current_directory = self.current_directory()
         
