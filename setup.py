@@ -18,5 +18,7 @@ setup(
         'Topic :: Desktop Environment :: File Managers',
         'Operating System :: Microsoft :: Windows',
         'Programming Language :: Python :: 2.7',
-    ]
+    ],
+    test_suite='nose.collector',
+    tests_require=['nose']
 )
