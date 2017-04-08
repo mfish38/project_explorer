@@ -62,30 +62,68 @@ def _valid_split(path):
 
     return head.strip(), basename.strip()
 
-def _remove_invalid_basenames(path):
-    '''
-    If the path is not valid, then apply dirname() until it is, or only an empty string is left.
-    Does nothing to valid paths.
-    '''
-    while True:
-        # Handle no valid path case.
-        if path == '':
-            break
-
-        # Check if a valid path has been found.
-        if os.path.isdir(path):
-            break
-
-        path = os.path.dirname(path).strip()
-
-    return path
-
 def _normalize_path(path):
     '''
     Normalizes a path using os.path.normpath(), os.path.normcase(), and by replacing backslashes
     with forward slashes.
     '''
     return os.path.normcase(os.path.normpath(path)).replace('\\', '/')
+
+def _complete_path(path):
+    '''
+    Returns:
+        - None if there are no available completions (the path is invalid).
+        - A list containing paths (not ending in path separators) if there are available 
+        completions. The paths will be normalized using normalize_path().
+    '''
+    path = path.strip()
+
+    # Complete drive letters
+    if len(path) == 1:
+        path += ':'
+        if os.path.isdir(path):
+            return [_normalize_path(path)]
+        else:
+            return None
+    elif len(path) == 2 and path[1] == ':':
+        if os.path.isdir(path):
+            return [_normalize_path(path)]
+        else:
+            return None
+
+    # After this point try to tab complete where the basename is valid, but the tail isn't.
+
+    head, tail = _valid_split(path)
+
+    # If there is no valid head, then we can't do anything.
+    if head == '':
+        return None
+
+    # If there is no tail, then change to the head. This handles "c:/path /" and "c:/path/ /"
+    if tail == '':
+        return [_normalize_path(head)]
+
+    # Convert to lower case for case insensitivity.
+    tail = tail.lower()
+
+    # Get the list of directory names that start with the tail.
+    possibilities = [name.lower() for name in os.listdir(head)]
+    possibilities = [
+        name
+        for name in possibilities
+        if name.startswith(tail) and os.path.isdir(os.path.join(head, name))
+    ]
+
+    if len(possibilities) == 0:
+        return None
+    elif len(possibilities) == 1:
+        path = _PATH_SEPARATOR.join([head, possibilities[0]])
+        return [_normalize_path(path)]
+    else:
+        return [
+            _normalize_path(_PATH_SEPARATOR.join([head, possibility]))
+            for possibility in possibilities
+        ]
     
 class RootEdit(QLineEdit):
     '''
@@ -100,6 +138,7 @@ class RootEdit(QLineEdit):
         self._view = view
 
         self._tab_suggestions = None
+        self._previous_text = None
 
         self.textEdited.connect(self._handle_edit)
 
@@ -107,133 +146,100 @@ class RootEdit(QLineEdit):
         '''
         Implements tab completion.
         '''
-        path = self.text().strip()
-
-        # Tab complete drive letters
-        if len(path) == 1:
-            # If the drive letter is valid, then autocomplete it.
-            path = '{}:{}'.format(path, _PATH_SEPARATOR)
-
-            if os.path.isdir(path):
-                self.setText(path)
-                self.new_root.emit(path)
-
-            return
-        elif len(path) == 2 and path[1] == ':' and os.path.isdir(path):
-            # Add a path separator if tab pressed on a valid drive letter.
-            path += _PATH_SEPARATOR
-
-            self.setText(path)
-            self.new_root.emit(path)
-
-            return
-
-        # After this point try to tab complete where the basename is valid, but the tail isn't.
-
-        head, tail = _valid_split(path)
-
-        # If there is no valid head, then we can't do anything.
-        if head == '':
-            return
-
-        # If there is no tail, then change to the head. This handles "c:/path /" and "c:/path/ /"
-        if tail == '':
-            head = _normalize_path(head) + _PATH_SEPARATOR
-            self.setText(head)
-            self.new_root.emit(head)
-            return
-
-        # convert to lower case for case insensitivity.
-        tail = tail.lower()
-
+        text = self.text()
+        
         if self._tab_suggestions is None:
-            possibilities = [name.lower() for name in os.listdir(head)]
-            possibilities = [
-                name
-                for name in possibilities
-                if name.startswith(tail) and os.path.isdir(os.path.join(head, name))]
-
-            if len(possibilities) == 0:
-                # If there are no possibilities, then do nothing.
+            possibilities = _complete_path(text)
+            if possibilities is None:
                 return
             elif len(possibilities) == 1:
-                # If there is only one possibility then complete using it.
-                completed_path = _PATH_SEPARATOR.join([head, possibilities[0]])
-                completed_path = _normalize_path(completed_path) + _PATH_SEPARATOR
-                self.setText(completed_path)
-                self.new_root.emit(completed_path)
+                path = possibilities[0]
+                if not path.endswith(_PATH_SEPARATOR):
+                    path += _PATH_SEPARATOR
+                self.setText(path)
+                self.new_root.emit(path)
                 return
-
-            # Create a loop of suggestions.
-            self._tab_suggestions = itertools.cycle(possibilities)
-
-            # Advance the suggestions by one if the current tail is the first suggestion.
-            if tail == possibilities[0]:
-                next(self._tab_suggestions)
-
+            else:
+                # Create a loop of suggestions.
+                self._tab_suggestions = itertools.cycle(possibilities)
+                
+                # Advance the suggestions by one if the current text is the first suggestion.
+                if text == possibilities[0]:
+                    next(self._tab_suggestions)
+        
         # Cycle through the possibilities.
         try:
-            self.setText(_PATH_SEPARATOR.join([head, next(self._tab_suggestions)]))
+            self.setText(next(self._tab_suggestions))
         except StopIteration:
             # There were no suggestions
             pass
 
+    def setText(self, text):
+        '''
+        Set the text of the root edit.
+        '''
+        self._previous_text = text
+        super(RootEdit, self).setText(text)
+            
     def _handle_edit(self, text):
         '''
         This handles user edits, and if the input path is valid, changes the root to it.
         '''
         text = text.strip()
-
-        # If the text is blank, then go to 'This PC'
+        previous_text = self._previous_text
+        
         if text == '':
+            # If the text is blank, then go to 'This PC'
             self.new_root.emit('This PC')
             return
-
-        # Throw out invalid basenames.
-        text = _remove_invalid_basenames(text)
-
-        # If there is no valid basename, go to 'This PC'
-        if text == '':
-            self.new_root.emit('This PC')
+        elif (
+            (
+                previous_text is not None
+                and text == previous_text[:-1]
+                and previous_text.endswith(('/', '\\'))
+            )
+            or os.path.isfile(text)
+        ):
+            # If the path separator has been deleted, or the text is a file path, then go to the
+            # dirname.
+            
+            path = os.path.dirname(text)
+            if path == text:
+                # The dirname did nothing so the text is a drive. Go to 'This PC'
+                self.setText('')
+                self.new_root.emit('This PC')
+                return
+            
+            path = _normalize_path(path)
+            if not path.endswith(_PATH_SEPARATOR):
+                path += _PATH_SEPARATOR
+            self.setText(path)
+            self.new_root.emit(path)
             return
-
-        # Do nothing if the path is already the current root
-        normalized_current_root = _normalize_path(self._model.filePath(self._view.rootIndex()))
-        normalized_text = _normalize_path(text)
-        if normalized_text == normalized_current_root:
+        
+        possibilities = _complete_path(text)
+        if possibilities is None:
+            # Do nothing if the path has no completions.
             return
-
-        # Handle ambiguous paths (paths that are a prefix to another path).
-        if not text.endswith(('/', '\\')):
-            basename = os.path.basename(text)
-            ambiguous_path = any(
-                (path.startswith(basename)
-                 for path in os.listdir(os.path.dirname(text))
-                 if path != basename))
-
-            if ambiguous_path:
-                # If the path is a folder in the current root, then don't do anything if the path is
-                # ambiguous.
-                if normalized_current_root == os.path.dirname(normalized_text):
-                    return
-
-                # If the current root and the new path are in the same directory, and the path is
-                # ambiguous, then go to the directory containing them both.
-                # print normalized_current_root
-                # print text
-                if os.path.dirname(normalized_current_root) == os.path.dirname(normalized_text):
-                    text = os.path.dirname(text)
-
-        # Normalize the path
-        text = _normalize_path(text)
-
-        # Add a separator at the end if the path is not just a drive letter
-        if os.path.splitdrive(text)[1] != '':
-            text += _PATH_SEPARATOR
-
-        self.setText(text)
-        self.new_root.emit(text)
-
+        elif len(possibilities) > 1:
+            # Do nothing if there is more than one completion.
+            return
+        else:
+            # The text unambiguously completes to a valid directory.
+            
+            path = _normalize_path(text)
+            
+            # Add a colon for drive letters.
+            if len(path) == 1:
+                path += ':'
+            
+            # Add a path separator and go to the path if it is its own completion.
+            if path == possibilities[0]:
+                path += _PATH_SEPARATOR
+                self.setText(path)
+                self.new_root.emit(path)
+                return
+    
     def update(self):
         '''
         Updates the root edit to show the current path.
