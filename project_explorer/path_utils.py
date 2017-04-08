@@ -1,6 +1,77 @@
 
 import os
 
+def version_file_name(dirname, basename):
+    '''
+    Creates a file name for use in the given directory.
+    
+    If a file of the same name exists in the directory, a version number as added and incremented
+    until an unused file name is found.
+    
+    Parameters:
+        - dirname
+            The directory that the file will be in.
+         
+        - basename
+            The intended name of the file.
+            
+    Returns:
+        The file name to use. Any version numbers will be added as an underscore followed by a
+        number immediately before the extension.
+    '''
+    versioned_name = os.path.join(dirname, basename)
+    if not os.path.isfile(versioned_name):
+        return versioned_name
+        
+    # Get a free version suffix.
+    name, extension = os.path.splitext(basename)
+    counter = 0
+    while True:
+        versioned_name = os.path.join(
+            dirname, name + '_{}{}'.format(counter, extension))
+
+        if not os.path.isfile(versioned_name):
+            break
+
+        counter += 1
+    
+    return versioned_name
+    
+def version_directory_name(dirname, basename):
+    '''
+    Creates a directory name for use in the given directory.
+    
+    If a directory of the same name exists in the directory, a version number as added and
+    incremented until an unused directory name is found.
+    
+    Parameters:
+        - dirname
+            The directory that the directory will be in.
+         
+        - basename
+            The intended name of the directory.
+            
+    Returns:
+        The directory name to use. Any version numbers will be added as an underscore followed by a
+        number at the end of the name.
+    '''
+    versioned_name = os.path.join(dirname, basename)
+    if not os.path.isdir(versioned_name):
+        return versioned_name
+    
+    # Get a free version suffix.
+    counter = 0
+    while True:
+        versioned_name = os.path.join(
+            dirname, basename + '_{}'.format(counter))
+
+        if not os.path.isdir(versioned_name):
+            break
+
+        counter += 1
+    
+    return versioned_name
+
 def valid_split(path):
     '''
     Splits the given path into a valid head, and the basename immediately following it.  The

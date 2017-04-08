@@ -38,7 +38,7 @@ from PySide.QtGui import (
 )
 
 from json_file_icon_provider import JSONFileIconProvider
-from path_utils import complete_path, normalize_path
+import path_utils
 
 _PATH_SEPARATOR = '/'
     
@@ -66,7 +66,7 @@ class RootEdit(QLineEdit):
         text = self.text()
         
         if self._tab_suggestions is None:
-            possibilities = complete_path(text, _PATH_SEPARATOR)
+            possibilities = path_utils.complete_path(text, _PATH_SEPARATOR)
             if possibilities is None:
                 return
             elif len(possibilities) == 1:
@@ -127,14 +127,14 @@ class RootEdit(QLineEdit):
                 self.new_root.emit('This PC')
                 return
             
-            path = normalize_path(path, _PATH_SEPARATOR)
+            path = path_utils.normalize_path(path, _PATH_SEPARATOR)
             if not path.endswith(_PATH_SEPARATOR):
                 path += _PATH_SEPARATOR
             self.setText(path)
             self.new_root.emit(path)
             return
         
-        possibilities = complete_path(text)
+        possibilities = path_utils.complete_path(text)
         if possibilities is None:
             # Do nothing if the path has no completions.
             return
@@ -144,7 +144,7 @@ class RootEdit(QLineEdit):
         else:
             # The text unambiguously completes to a valid directory.
             
-            path = normalize_path(text, _PATH_SEPARATOR)
+            path = path_utils.normalize_path(text, _PATH_SEPARATOR)
             
             # Add a colon for drive letters.
             if len(path) == 1:
@@ -164,7 +164,7 @@ class RootEdit(QLineEdit):
         path = self._model.filePath(self._view.rootIndex())
 
         if path != '':
-            path = normalize_path(path, _PATH_SEPARATOR)
+            path = path_utils.normalize_path(path, _PATH_SEPARATOR)
             if not path.endswith(_PATH_SEPARATOR):
                 path += _PATH_SEPARATOR
 
@@ -563,37 +563,10 @@ class RootWidget(QFrame):
                 basename = os.path.basename(path)
 
                 if os.path.isdir(path):
-                    if source_directory == destination_directory:
-                        # Get a free version suffix.
-                        counter = 0
-                        while True:
-                            destination = os.path.join(
-                                destination_directory, basename + '_{}'.format(counter))
-
-                            if not os.path.isdir(destination):
-                                break
-
-                            counter += 1
-                    else:
-                        destination = os.path.join(destination_directory, basename)
-
+                    destination = path_utils.version_directory_name(destination_directory, basename)
                     shutil.copytree(path, destination)
                 elif os.path.isfile(path):
-                    if source_directory == destination_directory:
-                        # Get a free version suffix.
-                        name, extension = os.path.splitext(basename)
-                        counter = 0
-                        while True:
-                            destination = os.path.join(
-                                destination_directory, name + '_{}{}'.format(counter, extension))
-
-                            if not os.path.isfile(destination):
-                                break
-
-                            counter += 1
-                    else:
-                        destination = os.path.join(destination_directory, basename)
-
+                    destination = path_utils.version_file_name(destination_directory, basename)
                     shutil.copy2(path, destination)
 
         # TODO:
@@ -640,14 +613,7 @@ class RootWidget(QFrame):
         directory = self.current_directory()
 
         # Get a free file name
-        counter = 0
-        while True:
-            new_file_path = os.path.join(directory, 'new_file_{}'.format(counter))
-
-            if not os.path.isfile(new_file_path):
-                break
-
-            counter += 1
+        new_file_path = path_utils.version_file_name(directory, 'new_file')
 
         # Create the new file.
         open(new_file_path, 'a').close()
@@ -665,14 +631,7 @@ class RootWidget(QFrame):
         directory = self.current_directory()
 
         # Get a free directory name
-        counter = 0
-        while True:
-            new_directory_path = os.path.join(directory, 'new_directory_{}'.format(counter))
-
-            if not os.path.isdir(new_directory_path):
-                break
-
-            counter += 1
+        new_directory_path = path_utils.version_directory_name(directory, 'new_directory')
 
         # Create the new file.
         os.mkdir(new_directory_path)
