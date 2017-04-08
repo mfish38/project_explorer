@@ -16,8 +16,8 @@ def version_file_name(dirname, basename):
             The intended name of the file.
             
     Returns:
-        The file name to use. Any version numbers will be added as an underscore followed by a
-        number immediately before the extension.
+        The full path of the file name to use. Any version numbers will be added as an underscore
+        followed by a number immediately before the extension.
     '''
     versioned_name = os.path.join(dirname, basename)
     if not os.path.isfile(versioned_name):
@@ -52,8 +52,8 @@ def version_directory_name(dirname, basename):
             The intended name of the directory.
             
     Returns:
-        The directory name to use. Any version numbers will be added as an underscore followed by a
-        number at the end of the name.
+        The full path of the directory name to use. Any version numbers will be added as an
+        underscore followed by a number at the end of the name.
     '''
     versioned_name = os.path.join(dirname, basename)
     if not os.path.isdir(versioned_name):
