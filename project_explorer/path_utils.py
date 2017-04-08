@@ -117,21 +117,18 @@ def normalize_path(path, separator='/'):
     else:
         raise Exception('Invalid path separator.')
 
-def complete_path(path, separator='/'):
+def complete_directory_path(path):
     '''
-    Completes the given path.
+    Completes the given path to a directory.
     
     Parameters:
         - path
             The path to complete.
             
-        - separator
-            The path separator to normalize to. This should be / or \.
-            
     Returns:
         - None if there are no available completions (the path is invalid).
         - A list containing paths (not ending in path separators) if there are available 
-        completions. The paths will be normalized using normalize_path().
+        completions.
     '''
     path = path.strip()
 
@@ -139,12 +136,12 @@ def complete_path(path, separator='/'):
     if len(path) == 1:
         path += ':'
         if os.path.isdir(path):
-            return [normalize_path(path, separator)]
+            return [path]
         else:
             return None
     elif len(path) == 2 and path[1] == ':':
         if os.path.isdir(path):
-            return [normalize_path(path, separator)]
+            return [path]
         else:
             return None
 
@@ -158,26 +155,21 @@ def complete_path(path, separator='/'):
 
     # If there is no tail, then change to the head. This handles "c:/path /" and "c:/path/ /"
     if tail == '':
-        return [normalize_path(head, separator)]
+        return [head]
 
     # Convert to lower case for case insensitivity.
     tail = tail.lower()
 
-    # Get the list of directory names that start with the tail.
-    possibilities = [name.lower() for name in os.listdir(head)]
-    possibilities = [
-        name
-        for name in possibilities
-        if name.startswith(tail) and os.path.isdir(os.path.join(head, name))
-    ]
+    # Get a list of the names in the directory.
+    possibilities = (name.lower() for name in os.listdir(head))
+    
+    # Filter to the ones that the current tail is a prefix to, and convert to full paths.
+    possibilities = (os.path.join(head, name) for name in possibilities if name.startswith(tail))
+    
+    # Filter to ones that are existing directories.
+    possibilities = [path for path in possibilities if os.path.isdir(path)]
 
     if len(possibilities) == 0:
         return None
-    elif len(possibilities) == 1:
-        path = separator.join([head, possibilities[0]])
-        return [normalize_path(path, separator)]
     else:
-        return [
-            normalize_path(separator.join([head, possibility]), separator)
-            for possibility in possibilities
-        ]
+        return possibilities

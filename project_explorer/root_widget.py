@@ -66,10 +66,15 @@ class RootEdit(QLineEdit):
         text = self.text()
         
         if self._tab_suggestions is None:
-            possibilities = path_utils.complete_path(text, _PATH_SEPARATOR)
+            possibilities = path_utils.complete_directory_path(text)
             if possibilities is None:
                 return
-            elif len(possibilities) == 1:
+            
+            # Normalize the possibilities
+            possibilities = [
+                path_utils.normalize_path(path, _PATH_SEPARATOR) for path in possibilities]
+            
+            if len(possibilities) == 1:
                 path = possibilities[0]
                 if not path.endswith(_PATH_SEPARATOR):
                     path += _PATH_SEPARATOR
@@ -134,28 +139,28 @@ class RootEdit(QLineEdit):
             self.new_root.emit(path)
             return
         
-        possibilities = path_utils.complete_path(text)
+        possibilities = path_utils.complete_directory_path(text)
         if possibilities is None:
             # Do nothing if the path has no completions.
             return
         elif len(possibilities) > 1:
             # Do nothing if there is more than one completion.
             return
-        else:
-            # The text unambiguously completes to a valid directory.
-            
-            path = path_utils.normalize_path(text, _PATH_SEPARATOR)
-            
-            # Add a colon for drive letters.
-            if len(path) == 1:
-                path += ':'
-            
-            # Add a path separator and go to the path if it is its own completion.
-            if path == possibilities[0]:
-                path += _PATH_SEPARATOR
-                self.setText(path)
-                self.new_root.emit(path)
-                return
+        
+        # Normalize the possibility and the path.
+        possibility = path_utils.normalize_path(possibilities[0], _PATH_SEPARATOR)
+        path = path_utils.normalize_path(text, _PATH_SEPARATOR)
+        
+        # Add a colon for drive letters.
+        if len(path) == 1:
+            path += ':'
+        
+        # Add a path separator and go to the path if it is its own completion.
+        if path == possibility:
+            path += _PATH_SEPARATOR
+            self.setText(path)
+            self.new_root.emit(path)
+            return
     
     def update(self):
         '''
