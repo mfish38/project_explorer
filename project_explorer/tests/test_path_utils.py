@@ -3,7 +3,7 @@ from unittest import TestCase
 
 import project_explorer.path_utils as path_utils
 
-class Test_normalize_path(TestCase):
+class TestNormalizePath(TestCase):
     def test_normpath(self):
         cases = (
             ('c:/foo'       , 'c:/foo'),
@@ -44,4 +44,7 @@ class Test_normalize_path(TestCase):
         for input in inputs:
             output = path_utils.normalize_path(input, separator='\\')
             self.assertEqual(output, expected_output)
+        
+        with self.assertRaises(Exception):
+            path_utils.normalize_path('c:/foo/goo', separator='X')
             
