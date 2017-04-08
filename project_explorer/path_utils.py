@@ -28,6 +28,16 @@ def normalize_path(path, separator='/'):
 
     Paths are normalized using os.path.normpath(), os.path.normcase(), and by replacing the path
     separator.
+    
+    Parameters:
+        - path
+            The path to normalize.
+            
+        - separator
+            The path separator to normalize to. This should be / or \.
+            
+    Returns:
+        The normalized path.
     '''
     if separator == '/':
         return os.path.normcase(os.path.normpath(path)).replace('\\', '/')
@@ -38,6 +48,15 @@ def normalize_path(path, separator='/'):
 
 def complete_path(path, separator='/'):
     '''
+    Completes the given path.
+    
+    Parameters:
+        - path
+            The path to complete.
+            
+        - separator
+            The path separator to normalize to. This should be / or \.
+            
     Returns:
         - None if there are no available completions (the path is invalid).
         - A list containing paths (not ending in path separators) if there are available 
