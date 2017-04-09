@@ -145,7 +145,7 @@ def complete_directory_path(path):
         else:
             return None
 
-    # After this point try to tab complete where the basename is valid, but the tail isn't.
+    # After this point try to complete where the basename is valid, but the tail isn't.
 
     head, tail = valid_split(path)
 
