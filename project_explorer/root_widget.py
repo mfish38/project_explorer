@@ -567,11 +567,11 @@ class RootWidget(QFrame):
 
                 basename = os.path.basename(path)
 
+                destination = path_utils.versioned_name(destination_directory, basename)
+                
                 if os.path.isdir(path):
-                    destination = path_utils.version_directory_name(destination_directory, basename)
                     shutil.copytree(path, destination)
                 elif os.path.isfile(path):
-                    destination = path_utils.version_file_name(destination_directory, basename)
                     shutil.copy2(path, destination)
 
         # TODO:
@@ -618,7 +618,7 @@ class RootWidget(QFrame):
         directory = self.current_directory()
 
         # Get a free file name
-        new_file_path = path_utils.version_file_name(directory, 'new_file')
+        new_file_path = path_utils.versioned_name(directory, 'new_file')
 
         # Create the new file.
         open(new_file_path, 'a').close()
@@ -636,7 +636,7 @@ class RootWidget(QFrame):
         directory = self.current_directory()
 
         # Get a free directory name
-        new_directory_path = path_utils.version_directory_name(directory, 'new_directory')
+        new_directory_path = path_utils.versioned_name(directory, 'new_directory')
 
         # Create the new file.
         os.mkdir(new_directory_path)
