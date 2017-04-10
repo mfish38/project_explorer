@@ -125,7 +125,7 @@ def complete_directory_path(path):
     if head == '':
         return None
 
-    # If there is no tail, then change to the head. This handles "c:/path /" and "c:/path/ /"
+    # If there is no tail, then return the head. This handles "c:/path /" and "c:/path/ /"
     if tail == '':
         return [head]
 
