@@ -1,12 +1,12 @@
 
 import os
 
-def versioned_name(dirname, basename):
+def versioned_name(dirname, basename, at_end=False):
     '''
     Creates a versioned name for use in the given directory.
     
     If the name already exists in the directory, a version number as added and incremented until an
-    unused name is found.
+    unused name is found. If the name does not exist, no version will be added.
     
     Parameters:
         - dirname
@@ -14,6 +14,10 @@ def versioned_name(dirname, basename):
          
         - basename
             The intended name.
+        
+        - at_end
+            If true, the version will be added at the end of the name instead of before any
+            extension. This is for use with names that are intended to be for directories.
             
     Returns:
         The full path of the file name to use. Any version numbers will be added as an underscore
@@ -28,8 +32,10 @@ def versioned_name(dirname, basename):
     name, extension = os.path.splitext(basename)
     counter = 0
     while True:
-        versioned_name = os.path.join(
-            dirname, '{}_{}{}'.format(name, counter, extension))
+        if not at_end:
+            versioned_name = os.path.join(dirname, '{}_{}{}'.format(name, counter, extension))
+        else:
+            versioned_name = os.path.join(dirname, '{}_{}'.format(basename, counter))
 
         if not os.path.exists(versioned_name):
             break
