@@ -89,18 +89,16 @@ def normalize_path(path, separator='/'):
     else:
         raise Exception('Invalid path separator.')
 
-def complete_directory_path(path):
+def complete_path(path):
     '''
-    Completes the given path to a directory.
+    Completes the given path.
     
     Parameters:
         - path
             The path to complete.
             
     Returns:
-        - None if there are no available completions (the path is invalid).
-        - A list containing paths (not ending in path separators) if there are available 
-        completions.
+        A list containing paths (not ending in path separators).
     '''
     path = path.strip()
 
@@ -138,10 +136,4 @@ def complete_directory_path(path):
     # Filter to the ones that the current tail is a prefix to, and convert to full paths.
     possibilities = (os.path.join(head, name) for name in possibilities if name.startswith(tail))
     
-    # Filter to ones that are existing directories.
-    possibilities = [path for path in possibilities if os.path.isdir(path)]
-
-    if len(possibilities) == 0:
-        return None
-    else:
-        return possibilities
+    return list(possibilities)
