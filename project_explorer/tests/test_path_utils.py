@@ -180,4 +180,37 @@ class TestNormalizePath(TestCase):
         
         with self.assertRaises(Exception):
             path_utils.normalize_path('c:/foo/goo', separator='X')
-            
+         
+class TestCompletePath(TestCase):
+    def test_drive_letters(self):
+        valid_drive_letter = 'C'
+    
+        invalid_drive_letter = None
+        for drive_letter in (chr(x) for x in xrange(65, 91)):
+            if not os.path.isdir(drive_letter + ':'):
+                invalid_drive_letter = drive_letter
+                break
+        
+        if invalid_drive_letter is None:
+            self.fail('Could not find an invalid drive letter for testing purposes.')
+        
+        # Test a valid drive letter without a colon.
+        output = path_utils.complete_path(valid_drive_letter)
+        expected_output = [valid_drive_letter + ':']
+        self.assertEqual(output, expected_output)
+        
+        # Test a valid drive letter with a colon.
+        output = path_utils.complete_path(valid_drive_letter + ':')
+        expected_output = [valid_drive_letter + ':']
+        self.assertEqual(output, expected_output)
+        
+        # Test an invalid drive letter without a colon.
+        output = path_utils.complete_path(invalid_drive_letter)
+        expected_output = []
+        self.assertEqual(output, expected_output)
+        
+        # Test an invalid drive letter with a colon.
+        output = path_utils.complete_path(invalid_drive_letter + ':')
+        expected_output = []
+        self.assertEqual(output, expected_output)
+        
