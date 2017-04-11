@@ -93,6 +93,14 @@ def complete_path(path):
     '''
     Completes the given path.
     
+    If path is a single character that corresponds to a valid drive letter, then a colon is added
+    and the path returned as the only possibility.
+    
+    If the path is a single character followed by a colon, then the path is returned unchanged as
+    the only possibility.
+    
+    
+    
     Parameters:
         - path
             The path to complete.
@@ -108,12 +116,12 @@ def complete_path(path):
         if os.path.isdir(path):
             return [path]
         else:
-            return None
+            return []
     elif len(path) == 2 and path[1] == ':':
         if os.path.isdir(path):
             return [path]
         else:
-            return None
+            return []
 
     # After this point try to complete where the basename is valid, but the tail isn't.
 
@@ -121,7 +129,7 @@ def complete_path(path):
 
     # If there is no valid head, then we can't do anything.
     if head == '':
-        return None
+        return []
 
     # If there is no tail, then return the head. This handles "c:/path /" and "c:/path/ /"
     if tail == '':
