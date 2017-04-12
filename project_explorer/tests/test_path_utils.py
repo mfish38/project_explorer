@@ -183,6 +183,9 @@ class TestNormalizePath(TestCase):
          
 class TestCompletePath(TestCase):
     def test_drive_letters(self):
+        '''
+        Tests drive letter completions.
+        '''
         valid_drive_letter = 'C'
     
         invalid_drive_letter = None
@@ -213,4 +216,70 @@ class TestCompletePath(TestCase):
         output = path_utils.complete_path(invalid_drive_letter + ':')
         expected_output = []
         self.assertEqual(output, expected_output)
+       
+    def test_completions(self):
+        '''
+        Test path completions.
+        '''
+        # Test 100% invalid path
+        test_path = path_utils.versioned_name('', 'foo')
+        output = path_utils.complete_path(test_path)
+        expected_output = []
+        self.assertEqual(output, expected_output)
+        
+        # Test an invalid path ending in a separator
+        test_path = path_utils.versioned_name('', 'foo/')
+        output = path_utils.complete_path(test_path)
+        expected_output = []
+        self.assertEqual(output, expected_output)
+        
+        test_directory = tempfile.mkdtemp()
+        
+        # Test valid unambiguous path
+        test_path = os.path.join(test_directory, 'unambiguous_dir')
+        os.mkdir(test_path)
+        output = path_utils.complete_path(test_path)
+        expected_output = [test_path]
+        self.assertEqual(output, expected_output)        
+        
+        # Test valid unambiguous path ending in a separator
+        test_path = os.path.join(test_directory, 'unambiguous_dir/')
+        output = path_utils.complete_path(test_path)
+        expected_output = [test_path]
+        self.assertEqual(output, expected_output)
+        
+        # Test valid ambiguous path
+        ambiguous_test_path_1 = os.path.join(test_directory, 'ambiguous_dir')
+        os.mkdir(ambiguous_test_path_1)
+        ambiguous_test_path_2 = os.path.join(test_directory, 'ambiguous_dir1')
+        os.mkdir(ambiguous_test_path_2)
+        output = path_utils.complete_path(ambiguous_test_path_1)
+        expected_output = [ambiguous_test_path_1, ambiguous_test_path_2]
+        self.assertEqual(set(output), set(expected_output))        
+        
+        # Test valid ambiguous path ending in a separator
+        test_path_1 = os.path.join(test_directory, 'ambiguous_dir/')
+        output = path_utils.complete_path(test_path_1)
+        expected_output = [test_path_1]
+        self.assertEqual(output, expected_output)
+        
+        # Test partially invalid path with no possible completions.
+        test_path = os.path.join(test_directory, 'foo/goo/moo')
+        output = path_utils.complete_path(test_path)
+        expected_output = []
+        self.assertEqual(output, expected_output)        
+        
+        # Test partially invalid path with possible completions.
+        test_path = os.path.join(test_directory, 'ambig')
+        output = path_utils.complete_path(test_path)
+        expected_output = [ambiguous_test_path_1, ambiguous_test_path_2]
+        self.assertEqual(set(output), set(expected_output))           
+        
+        # Test partially invalid path ending with a separator.
+        test_path = os.path.join(test_directory, 'ambig/')
+        output = path_utils.complete_path(test_path)
+        expected_output = [ambiguous_test_path_1, ambiguous_test_path_2]
+        self.assertEqual(set(output), set(expected_output))      
+        
+        shutil.rmtree(test_directory)
         

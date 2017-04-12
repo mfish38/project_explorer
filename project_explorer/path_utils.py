@@ -63,12 +63,12 @@ def valid_split(path):
     while True:
         head, basename = os.path.split(head)
 
-        # Check if a valid head has been found.
-        if os.path.isdir(head):
-            break
-
         # Handle no valid head case.
         if head == '':
+            break
+            
+        # Check if a valid head has been found.
+        if os.path.isdir(head + os.sep):
             break
 
     return head, basename
@@ -107,9 +107,13 @@ def complete_path(path):
     If the path is a single character followed by a colon, then the path is returned unchanged as
     the only possibility.
     
+    If the path ends in a / or \, and is a valid directory path, then the path is returned unchanged
+    as the only possibility.
+    
     Otherwise, the path is split using valid_split() into a head and tail. Then a list of all paths
     in the head directory that are prefixed with the tail are returned as possible completions. This
     prefix check is done case insensitively.
+    
     
     Parameters:
         - path
@@ -130,23 +134,21 @@ def complete_path(path):
             return [path]
         else:
             return []
-
+    elif path.endswith(('/', '\\')) and os.path.isdir(path):
+        return [path]
+    
     # After this point try to complete where the basename is valid, but the tail isn't.
-
+    
     head, tail = valid_split(path)
 
     # If there is no valid head, then we can't do anything.
     if head == '':
         return []
-
-    # If there is no tail, then return the head. This handles "c:/path /" and "c:/path/ /"
-    if tail == '':
-        return [head]
-
+    
     # Filter to the ones that the current tail is a prefix to, and convert to full paths.
     possibilities = [
         os.path.join(head, name)
         for name in os.listdir(head)
         if name.lower().startswith(tail.lower())]
-    
+
     return possibilities
