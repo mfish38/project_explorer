@@ -114,7 +114,6 @@ def complete_path(path):
     in the head directory that are prefixed with the tail are returned as possible completions. This
     prefix check is done case insensitively.
     
-    
     Parameters:
         - path
             The path to complete.
