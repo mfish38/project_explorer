@@ -46,8 +46,16 @@ def versioned_name(dirname, basename, at_end=False):
 
 def valid_split(path):
     '''
-    Splits the given path into a valid head, and the basename immediately following it.  The
-    remainder of the path after that basename is not returned.
+    Splits the given path into a head and basename like os.path.split(), except that if the head is
+    not a valid path, then head is repeatedly split into a new head and basename until it is.
+    
+    Returns:
+        (head, tail)
+            - head
+                The valid head. This will be an empty string if there is none.
+                
+            - tail
+                The basename.
     '''
     head = path
     basename = ''
@@ -99,7 +107,9 @@ def complete_path(path):
     If the path is a single character followed by a colon, then the path is returned unchanged as
     the only possibility.
     
-    
+    Otherwise, the path is split using valid_split() into a head and tail. Then a list of all paths
+    in the head directory that are prefixed with the tail are returned as possible completions. This
+    prefix check is done case insensitively.
     
     Parameters:
         - path
@@ -135,13 +145,10 @@ def complete_path(path):
     if tail == '':
         return [head]
 
-    # Convert to lower case for case insensitivity.
-    tail = tail.lower()
-
-    # Get a list of the names in the directory.
-    possibilities = (name.lower() for name in os.listdir(head))
-    
     # Filter to the ones that the current tail is a prefix to, and convert to full paths.
-    possibilities = (os.path.join(head, name) for name in possibilities if name.startswith(tail))
+    possibilities = [
+        os.path.join(head, name)
+        for name in os.listdir(head)
+        if name.lower().startswith(tail.lower())]
     
-    return list(possibilities)
+    return possibilities
