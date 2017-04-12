@@ -109,7 +109,6 @@ class RootEdit(QLineEdit):
         '''
         This handles user edits, and if the input path is valid, changes the root to it.
         '''
-        text = text.strip()
         previous_text = self._previous_text
         
         if text == '':

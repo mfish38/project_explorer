@@ -71,7 +71,7 @@ def valid_split(path):
         if head == '':
             break
 
-    return head.strip(), basename.strip()
+    return head, basename
 
 def normalize_path(path, separator='/'):
     '''
@@ -118,8 +118,6 @@ def complete_path(path):
     Returns:
         A list containing paths (not ending in path separators).
     '''
-    path = path.strip()
-
     # Complete drive letters
     if len(path) == 1:
         path += ':'
