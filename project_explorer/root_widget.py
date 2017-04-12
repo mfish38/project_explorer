@@ -724,6 +724,7 @@ class RootWidget(QFrame):
         except KeyError:
             os.startfile(path)
         else:
+            path = '"{}"'.format(path)
             command = open_with.format(path=path)
             subprocess.Popen(command, shell=True)
 
