@@ -8,7 +8,6 @@ Tree based file system browser widget for browsing the file tree from a movable 
 import os
 import datetime
 import shutil
-import itertools
 import string
 import subprocess
 
@@ -16,14 +15,11 @@ from PySide.QtCore import (
     Signal,
     Qt,
     QDir,
-    QEvent,
     QUrl,
     QMimeData,
-    QObject,
 )
 
 from PySide.QtGui import (
-    QLineEdit,
     QSortFilterProxyModel,
     QFrame,
     QApplication,
@@ -51,7 +47,7 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         self.setDynamicSortFilter(True)
 
         self._filter_extensions = set()
-    
+
     def filter_extensions(self, extensions):
         '''
         Sets the model to filter out files with the given extension.
@@ -110,7 +106,7 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         Pass through to QFileSystemModel
         '''
         return self.sourceModel().filePath(self.mapToSource(index))
-        
+
     def remove(self, index):
         '''
         Pass through to QFileSystemModel
@@ -145,18 +141,18 @@ class FileSystemProxyModel(QSortFilterProxyModel):
             return True
         else:
             return False
-    
+
 class SubprocessAction(QAction):
     '''
     An action that executes a command when triggered.
     '''
     def __init__(self, *args, **kwargs):
         super(SubprocessAction, self).__init__(*args, **kwargs)
-        
+
         self.command = None
-        
+
         self.triggered.connect(self.execute)
-    
+
     def execute(self):
         '''
         Executes the actions command.
@@ -211,10 +207,10 @@ class RootWidget(QFrame):
         # setup the context menu
         self._view.setContextMenuPolicy(Qt.CustomContextMenu)
         self._view.customContextMenuRequested.connect(self._context_menu)
-        
+
         # Unselect items on collapse.
         self._view.collapsed.connect(self._view.clearSelection)
-        
+
         # --- setup the current root path label ---
         self._root_edit = PathEdit()
         self._root_edit.new_path.connect(self._set_root_path)
@@ -254,7 +250,7 @@ class RootWidget(QFrame):
         if path is not None:
             self._set_root_path(path)
             self._root_edit.update(path)
-    
+
         self._settings = None
         self.update_settings(settings)
 
@@ -263,22 +259,22 @@ class RootWidget(QFrame):
         Opens a context menu generated from the user settings.
         '''
         menu_item_settings = self._settings['context_menu']
-        
+
         # Don't do anything if there are no defined menu items.
         if len(menu_item_settings) == 0:
             return
-        
+
         # Get all the selected file paths.
         selected_items = [self._model.filePath(index) for index in self._view.selectedIndexes()]
 
         # Get the current directory the user is in.
         current_directory = self.current_directory()
-        
+
         # Create the menu.
         menu = QMenu(self)
         for menu_item_setting in menu_item_settings:
             command = menu_item_setting['command']
-            
+
             # Get the highest field number in the command string, as well as a set of field names.
             field_names = set()
             highest_field_number = None
@@ -286,9 +282,9 @@ class RootWidget(QFrame):
                 field_name = parse_record[1]
                 if field_name is None:
                     continue
-                
+
                 field_names.add(field_name)
-                
+
                 try:
                     field_number = int(field_name)
                 except ValueError:
@@ -296,7 +292,7 @@ class RootWidget(QFrame):
                 else:
                     if highest_field_number is None or field_number > highest_field_number:
                         highest_field_number = field_number
-            
+
             # Check if the menu item should be disabled.
             enabled = True
             if (
@@ -323,25 +319,25 @@ class RootWidget(QFrame):
                     pass
                 else:
                     extensions = set(extensions)
-                    
+
                     for path in selected_items:
                         if not os.path.isfile(path) or os.path.splitext(path)[1] not in extensions:
                             enabled = False
                             break
-            
+
             if not enabled:
                 # On create a menu item if it is not specified to hide the item.
                 if not menu_item_setting.get('hide_if_disabled', False):
                     action = SubprocessAction(menu_item_setting['label'], self)
                     action.setEnabled(False)
                     menu.addAction(action)
-                    
+
                 # No need to setup the action command if it is disabled.
                 continue
-            
+
             action = SubprocessAction(menu_item_setting['label'], self)
             menu.addAction(action)
-            
+
             # Set the menu item command. The item will be disabled if there is a field in the
             # command string that is not supported.
             escaped_items = ['"{}"'.format(item) for item in selected_items]
@@ -355,7 +351,7 @@ class RootWidget(QFrame):
                 action.setEnabled(False)
             else:
                 action.command = command
-        
+
         # Show the menu.
         menu.popup(self._view.mapToGlobal(point))
 
@@ -438,10 +434,10 @@ class RootWidget(QFrame):
         Returns the directory containing the currently selected item.
         '''
         current_index = self._view.currentIndex()
-        
+
         if not current_index.isValid():
             return None
-        
+
         active_path = self._model.filePath(current_index)
 
         return os.path.dirname(active_path)
@@ -452,10 +448,10 @@ class RootWidget(QFrame):
         directory.
         '''
         current_index = self._view.currentIndex()
-        
+
         if not current_index.isValid():
             return None
-            
+
         active_path = self._model.filePath(current_index)
 
         if os.path.isdir(active_path):
@@ -506,10 +502,10 @@ class RootWidget(QFrame):
         Deletes all of the currently selected items.
         '''
         selected_indexes = self._view.selectedIndexes()
-        
+
         if len(selected_indexes) == 0:
             return
-        
+
         selection = QMessageBox.warning(
             self,
             'Delete',
@@ -537,10 +533,10 @@ class RootWidget(QFrame):
             item_name = os.path.basename(path)
             filesystem_frendly_date = str(datetime.datetime.now()).replace(':', ';')
             deleted_item_name = '{}@{}'.format(item_name, filesystem_frendly_date)
-            
+
             deleted_item_path = path_utils.versioned_name(
                 trash_directory, deleted_item_name, at_end=True)
-            
+
             if os.path.isdir(path):
                 shutil.copytree(
                     self._model.filePath(index), deleted_item_path)
@@ -557,7 +553,7 @@ class RootWidget(QFrame):
         '''
         if self._model.isDir(index):
             self._move_root_index(index)
-            
+
             path = self._model.filePath(self._view.rootIndex())
             self._root_edit.update(path)
         else:
@@ -569,7 +565,7 @@ class RootWidget(QFrame):
         '''
         path = self._model.filePath(index)
         _, extension = os.path.splitext(path)
-        
+
         try:
             open_with = self._settings['open_with'][extension]
         except KeyError:
@@ -600,7 +596,7 @@ class RootWidget(QFrame):
         initial_root_index = self._view.rootIndex()
         self._move_root_index(self._model.parent(initial_root_index))
         self._view.collapse(initial_root_index)
-        
+
         path = self._model.filePath(self._view.rootIndex())
         self._root_edit.update(path)
 

@@ -13,17 +13,12 @@ import ctypes
 
 from PySide.QtCore import (
     Signal,
-    QModelIndex,
     Qt,
-    QEvent,
-    QUrl,
-    QMimeData,
     QFileSystemWatcher,
     QTimer
 )
 
 from PySide.QtGui import (
-    QStyledItemDelegate,
     QFrame,
     QApplication,
     QAction,
