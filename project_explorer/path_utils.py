@@ -1,3 +1,9 @@
+'''
+Copyright (c) 2017 Mark Fisher
+Licensed under the MIT License, see LICENSE in the project root for full license.
+
+Utilities for working with paths.
+'''
 
 import os
 
