@@ -369,6 +369,9 @@ class RootWidget(QFrame):
         self._view.setContextMenuPolicy(Qt.CustomContextMenu)
         self._view.customContextMenuRequested.connect(self._context_menu)
         
+        # Unselect items on collapse.
+        self._view.collapsed.connect(self._view.clearSelection)
+        
         # --- setup the current root path label ---
         self._root_edit = RootEdit(self._model, self._view)
         self._root_edit.new_root.connect(self._set_root_path)
@@ -408,7 +411,7 @@ class RootWidget(QFrame):
         if path is not None:
             self._set_root_path(path)
             self._root_edit.update()
-
+    
         self._settings = None
         self.update_settings(settings)
 
