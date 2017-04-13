@@ -37,166 +37,9 @@ from PySide.QtGui import (
     QMenu,
 )
 
-from json_file_icon_provider import JSONFileIconProvider
 import path_utils
-
-_PATH_SEPARATOR = '/'
-    
-class RootEdit(QLineEdit):
-    '''
-    This widget displays the current path of a root, and allows the user to edit it.
-    '''
-    new_root = Signal(str)
-
-    def __init__(self, model, view, parent=None):
-        super(RootEdit, self).__init__(parent)
-
-        self._model = model
-        self._view = view
-
-        self._tab_suggestions = None
-        self._previous_text = None
-
-        self.textEdited.connect(self._handle_edit)
-
-    def _tab_complete(self):
-        '''
-        Implements tab completion.
-        '''
-        text = self.text()
-        
-        if self._tab_suggestions is None:
-            possibilities = path_utils.complete_path(text)
-            
-            # Normalize the possibilities and filter to directories.
-            possibilities = [
-                path_utils.normalize_path(path, _PATH_SEPARATOR)
-                for path in possibilities
-                if os.path.isdir(path)]
-                
-            if len(possibilities) == 0:
-                return
-            elif len(possibilities) == 1:
-                path = possibilities[0]
-                if not path.endswith(_PATH_SEPARATOR):
-                    path += _PATH_SEPARATOR
-                self.setText(path)
-                self.new_root.emit(path)
-                return
-            else:
-                # Create a loop of suggestions.
-                self._tab_suggestions = itertools.cycle(possibilities)
-                
-                # Advance the suggestions by one if the current text is the first suggestion.
-                if text == possibilities[0]:
-                    next(self._tab_suggestions)
-        
-        # Cycle through the possibilities.
-        try:
-            self.setText(next(self._tab_suggestions))
-        except StopIteration:
-            # There were no suggestions
-            pass
-
-    def setText(self, text):
-        '''
-        Set the text of the root edit.
-        '''
-        self._previous_text = text
-        super(RootEdit, self).setText(text)
-            
-    def _handle_edit(self, text):
-        '''
-        This handles user edits, and if the input path is valid, changes the root to it.
-        '''
-        previous_text = self._previous_text
-        
-        if text == '':
-            # If the text is blank, then go to 'This PC'
-            self.new_root.emit('This PC')
-            return
-        elif (
-            (
-                previous_text is not None
-                and text == previous_text[:-1]
-                and previous_text.endswith(('/', '\\'))
-            )
-            or os.path.isfile(text)
-        ):
-            # If the path separator has been deleted, or the text is a file path, then go to the
-            # dirname.
-            
-            path = os.path.dirname(text)
-            if path == text:
-                # The dirname did nothing so the text is a drive. Go to 'This PC'
-                self.setText('')
-                self.new_root.emit('This PC')
-                return
-            
-            path = path_utils.normalize_path(path, _PATH_SEPARATOR)
-            if not path.endswith(_PATH_SEPARATOR):
-                path += _PATH_SEPARATOR
-            self.setText(path)
-            self.new_root.emit(path)
-            return
-        
-        possibilities = path_utils.complete_path(text)
-        
-        # Normalize the possibilities and filter to directories.
-        possibilities = [
-            path_utils.normalize_path(path, _PATH_SEPARATOR)
-            for path in possibilities
-            if os.path.isdir(path)]
-        
-        if len(possibilities) == 0:
-            # Do nothing if the path has no completions.
-            return
-        elif len(possibilities) > 1:
-            # Do nothing if there is more than one completion.
-            return
-        
-        possibility = possibilities[0]
-        path = path_utils.normalize_path(text, _PATH_SEPARATOR)
-        
-        # Add a colon for drive letters.
-        if len(path) == 1:
-            path += ':'
-        
-        # Go to the path if it is its own completion.
-        if path == possibility:
-            if not path.endswith(_PATH_SEPARATOR):
-                path += _PATH_SEPARATOR
-            self.setText(path)
-            self.new_root.emit(path)
-            return
-    
-    def update(self):
-        '''
-        Updates the root edit to show the current path.
-        '''
-        path = self._model.filePath(self._view.rootIndex())
-
-        if path != '':
-            path = path_utils.normalize_path(path, _PATH_SEPARATOR)
-            if not path.endswith(_PATH_SEPARATOR):
-                path += _PATH_SEPARATOR
-
-        self.setText(path)
-
-    def event(self, event):
-        '''
-        Detects tab presses to trigger tab completion.
-        '''
-        if event.type() == QEvent.KeyPress:
-            if event.key() == Qt.Key_Tab:
-                self._tab_complete()
-
-                return True
-            else:
-                # The user has hit a key other than tab, so clear the tab suggestions.
-                self._tab_suggestions = None
-
-        return super(RootEdit, self).event(event)
+from json_file_icon_provider import JSONFileIconProvider
+from path_edit import PathEdit
 
 class FileSystemProxyModel(QSortFilterProxyModel):
     '''
@@ -373,8 +216,8 @@ class RootWidget(QFrame):
         self._view.collapsed.connect(self._view.clearSelection)
         
         # --- setup the current root path label ---
-        self._root_edit = RootEdit(self._model, self._view)
-        self._root_edit.new_root.connect(self._set_root_path)
+        self._root_edit = PathEdit()
+        self._root_edit.new_path.connect(self._set_root_path)
 
         # --- setup the tool bar ---
         tool_bar = QToolBar()
@@ -410,7 +253,7 @@ class RootWidget(QFrame):
 
         if path is not None:
             self._set_root_path(path)
-            self._root_edit.update()
+            self._root_edit.update(path)
     
         self._settings = None
         self.update_settings(settings)
@@ -714,7 +557,9 @@ class RootWidget(QFrame):
         '''
         if self._model.isDir(index):
             self._move_root_index(index)
-            self._root_edit.update()
+            
+            path = self._model.filePath(self._view.rootIndex())
+            self._root_edit.update(path)
         else:
             self._open_index(index)
 
@@ -755,7 +600,9 @@ class RootWidget(QFrame):
         initial_root_index = self._view.rootIndex()
         self._move_root_index(self._model.parent(initial_root_index))
         self._view.collapse(initial_root_index)
-        self._root_edit.update()
+        
+        path = self._model.filePath(self._view.rootIndex())
+        self._root_edit.update(path)
 
     def set_close_disabled(self, disabled):
         '''
