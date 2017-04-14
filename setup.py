@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='project_explorer',
-    version='0.0.0a4',
+    version='0.0.0a5',
     description='A simple file browser that uses project based concepts.',
     url='https://github.com/mfish38/project_explorer',
     author='Mark Fisher',
