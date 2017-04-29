@@ -7,7 +7,7 @@ Each tab represents a different project, and each project can have multiple root
 
 ## Installation
 
-Currently developed for Windows and requires Python 2.7.
+Currently developed for Windows and requires Python 2.7. Python 3.X support is planned when PySide2 is released on PyPi.
 
 Install with pip:
 
