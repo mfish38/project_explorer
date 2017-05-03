@@ -588,18 +588,7 @@ class RootWidget(QFrame):
         '''
         self._view.setRootIndex(index)
         self._view.setCurrentIndex(index)
-
-    def move_root_up(self):
-        '''
-        Moves the root of the view up one level. Note that the previous root will be collapsed to
-        prevent cluttering the view.
-        '''
-        initial_root_index = self._view.rootIndex()
-        self._move_root_index(self._model.parent(initial_root_index))
-        self._view.collapse(initial_root_index)
-
-        path = self._model.filePath(self._view.rootIndex())
-        self._root_edit.update(path)
+        self._view.collapseAll()
 
     def set_close_disabled(self, disabled):
         '''
