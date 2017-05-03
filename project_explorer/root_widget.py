@@ -342,6 +342,7 @@ class RootWidget(QFrame):
             # command string that is not supported.
             escaped_items = ['"{}"'.format(item) for item in selected_items]
             selected = ' '.join(escaped_items)
+            current_directory = '"{}"'.format(current_directory)
             try:
                 command = menu_item_setting['command'].format(
                     *escaped_items,
