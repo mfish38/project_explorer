@@ -64,6 +64,8 @@
         "md" : "icons/a-file-icon/icons/multi/file_type_markdown.png",
 
         "pdf" : "icons/a-file-icon/icons/multi/file_type_pdf.png",
+        
+        "pptx" : "icons/a-file-icon/icons/multi/file_type_powerpoint.png",
 
         "py" : "icons/a-file-icon/icons/multi/file_type_python.png",
 
@@ -135,7 +137,6 @@
         // "" : "icons/a-file-icon/icons/multi/file_type_php.png",
         // "" : "icons/a-file-icon/icons/multi/file_type_plist.png",
         // "" : "icons/a-file-icon/icons/multi/file_type_postcss.png",
-        // "" : "icons/a-file-icon/icons/multi/file_type_powerpoint.png",
         // "" : "icons/a-file-icon/icons/multi/file_type_preferences.png",
         // "" : "icons/a-file-icon/icons/multi/file_type_premiere.png",
         // "" : "icons/a-file-icon/icons/multi/file_type_procfile.png",
