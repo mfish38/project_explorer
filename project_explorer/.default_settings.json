@@ -63,6 +63,10 @@
             "command" : "start cmd /k cd /d {current_directory}"
         },
         {
+            "label"   : "Git",
+            "command" : "start cmd /k \"cd /d {current_directory} & git status\""
+        },
+        {
             "label"   : "Explorer Here",
             "command" : "cmd /c cd /d & explorer ."
         }
