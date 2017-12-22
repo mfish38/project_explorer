@@ -11,14 +11,14 @@ import json
 import shutil
 import ctypes
 
-from PySide.QtCore import (
+from qtpy.QtCore import (
     Signal,
     Qt,
     QFileSystemWatcher,
     QTimer
 )
 
-from PySide.QtGui import (
+from qtpy.QtWidgets import (
     QFrame,
     QApplication,
     QAction,
@@ -60,7 +60,7 @@ class Project(QFrame):
         add_root_action = QAction('Add Root', self)
         tool_bar.addAction(add_root_action)
         tool_bar.widgetForAction(add_root_action).setObjectName('add_root')
-        add_root_action.triggered.connect(self.add_root)
+        add_root_action.triggered.connect(lambda checked: self.add_root())
 
         open_trash_action = QAction('Open Trash', self)
         tool_bar.addAction(open_trash_action)
@@ -84,12 +84,18 @@ class Project(QFrame):
 
     @property
     def name(self):
+        '''
+        The name of the project.
+        '''
         return self._name
 
     def update_settings(self, new_settings):
+        '''
+        Updates the project with new settings.
+        '''
         self._settings = new_settings
 
-        roots = (self._splitter.widget(index) for index in xrange(self._splitter.count()))
+        roots = (self._splitter.widget(index) for index in range(self._splitter.count()))
         for root in roots:
             root.update_settings(new_settings)
 
@@ -98,7 +104,7 @@ class Project(QFrame):
         Sets whether the close buttons of all the project roots are disabled.
         '''
         child_count = self._splitter.count()
-        for index in xrange(child_count):
+        for index in range(child_count):
             child = self._splitter.widget(index)
 
             child.set_close_disabled(disabled)
@@ -149,15 +155,16 @@ class Project(QFrame):
         if not os.path.isdir(projects_directory):
             os.makedirs(projects_directory)
 
-        path, filter = QFileDialog.getSaveFileName(
+        path, filter_ = QFileDialog.getSaveFileName(
             self, 'Save Project', os.path.join(projects_directory, self._name))
 
-        if path == '' and filter == '':
+        if path == '' and filter_ == '':
             return
 
         root_paths = [
             self._splitter.widget(index).path()
-            for index in xrange(self._splitter.count())]
+            for index in range(self._splitter.count())
+        ]
 
         spliter_sizes = self._splitter.sizes()
 
@@ -270,7 +277,7 @@ class ProjectExplorer(QFrame):
         Creates a new project.
         '''
         # Get a unique project name.
-        open_projects = {self._tab_bar.tabText(index) for index in xrange(self._tab_bar.count())}
+        open_projects = {self._tab_bar.tabText(index) for index in range(self._tab_bar.count())}
         project_name_format = 'project_{}'
         project_count = 0
         while True:
@@ -297,10 +304,10 @@ class ProjectExplorer(QFrame):
         if not os.path.isdir(projects_directory):
             os.makedirs(projects_directory)
 
-        path, filter = QFileDialog.getOpenFileName(
+        path, filter_ = QFileDialog.getOpenFileName(
             self, 'Open Project', os.path.join(projects_directory))
 
-        if path == '' and filter == '':
+        if path == '' and filter_ == '':
             return
 
         project = Project.open(path, self._settings)
@@ -360,7 +367,7 @@ class ProjectExplorer(QFrame):
         self._apply_theme_settings()
 
         # Update the setting of all the open project widgets.
-        projects = (self._tab_widget.widget(index) for index in xrange(self._tab_widget.count()))
+        projects = (self._tab_widget.widget(index) for index in range(self._tab_widget.count()))
         for project in projects:
             project.update_settings(self._settings)
 
@@ -371,14 +378,17 @@ class ProjectExplorer(QFrame):
         self._settings_load_delay.start()
 
 def main():
+    '''
+    Runs the project explorer as a standalone program.
+    '''
     # The current working directory must be the package directory so that relative paths are
     # interpreted as relative to the installation.
     os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
     # Set the AppUserModelID so that the window is not grouped with other python programs in the
     # taskbar.
-    AppUserModelID = u'ProjectExplorer.ProjectExplorer'
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(AppUserModelID)
+    app_user_model_id = u'ProjectExplorer.ProjectExplorer'
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_user_model_id)
 
     application = QApplication(sys.argv)
 

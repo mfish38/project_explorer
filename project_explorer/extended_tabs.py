@@ -5,8 +5,20 @@ Licensed under the MIT License, see LICENSE in the project root for full license
 This module contains an implementation of tabs that is more flexible than QTabWidget.
 '''
 
-from PySide.QtCore import Qt, QSize
-from PySide.QtGui import QTabBar, QFrame, QStackedWidget, QToolBar, QBoxLayout
+# pylint: disable=C0103
+
+from qtpy.QtCore import (
+    Qt,
+    QSize
+)
+
+from qtpy.QtWidgets import (
+    QTabBar,
+    QFrame,
+    QStackedWidget,
+    QToolBar,
+    QBoxLayout
+)
 
 class _NoMinimumWidthTabBar(QTabBar):
     '''
@@ -14,13 +26,13 @@ class _NoMinimumWidthTabBar(QTabBar):
 
     QTabBar's default minimumSizeHint() is larger than the size of one tab. This means that if there
     is only one tab, then a QTabBar placed in a layout that has widgets to the right of it will have
-    an empty gap between the between the tab and the widgets. This class solves this issue by
-    setting the minimumSizeHint() width (or height in the case of vertical tabs) to 0.
+    an empty gap between the between the tab and the widgets. This class solves this issue.
     '''
-    def __init__(self):
-        super(_NoMinimumWidthTabBar, self).__init__()
-
     def minimumSizeHint(self):
+        '''
+        Overides the base method to set the size hints width (or height in the case of vertical
+        tabs) to 0.
+        '''
         hint = super(_NoMinimumWidthTabBar, self).minimumSizeHint()
 
         if self.shape() in {
@@ -77,17 +89,16 @@ class ExtendedTabBar(QFrame):
         Return the internal tab bar object's attributes if this class does not have the given
         attribute.
         '''
-        try:
-            return self.__dict__[name]
-        except:
-            return getattr(self._tab_bar, name)
+        return self.__dict__.get(name, getattr(self._tab_bar, name))
 
     def minimumSizeHint(self):
+        '''
+        Add on any margins to the minimum size hint. Keeps the widget from getting sized so that the
+        tab tops are cut off.
+        '''
         margins = self._main_layout.contentsMargins()
         minimum_size_hint = self._tab_bar.minimumSizeHint()
 
-        # Add on any margins to the minimum size hint. The widget from getting sized so that the tab
-        # tops are not cut off.
         if self.shape() in {
                 QTabBar.RoundedNorth,
                 QTabBar.RoundedSouth,

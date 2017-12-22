@@ -154,6 +154,7 @@ def complete_path(path):
     possibilities = [
         os.path.join(head, name)
         for name in os.listdir(head)
-        if name.lower().startswith(tail.lower())]
+        if name.lower().startswith(tail.lower())
+    ]
 
     return possibilities

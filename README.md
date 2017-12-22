@@ -7,7 +7,9 @@ Each tab represents a different project, and each project can have multiple root
 
 ## Installation
 
-Currently developed for Windows and requires Python 2.7. Python 3.X support is planned when PySide2 is released on PyPi.
+Currently developed for Windows and requires Python 3.6.
+
+Requires a Qt python library supported by [qtpy](https://github.com/spyder-ide/qtpy). Currently only PyQt5 is tested.
 
 Install with pip:
 

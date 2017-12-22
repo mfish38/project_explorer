@@ -42,8 +42,9 @@ Filenames settings override extension settings.
 
 import os
 
-from PySide.QtCore import QFileInfo
-from PySide.QtGui import QFileIconProvider, QIcon
+from qtpy.QtCore import QFileInfo
+from qtpy.QtWidgets import QFileIconProvider
+from qtpy.QtGui import QIcon
 
 import extended_json
 
@@ -67,7 +68,7 @@ class JSONFileIconProvider(QFileIconProvider):
             '''
             Loads (with caching) the icon specified by the given specifier.
             '''
-            if isinstance(icon_specifier, basestring):
+            if isinstance(icon_specifier, str):
                 icon_specifier = os.path.normcase(os.path.abspath(icon_specifier))
 
                 if icon_specifier not in icons:
@@ -98,15 +99,15 @@ class JSONFileIconProvider(QFileIconProvider):
         }
 
         self._type_icons = {}
-        for type_name, icon_specifier in settings['types'].iteritems():
+        for type_name, icon_specifier in settings['types'].items():
             self._type_icons[type_map[type_name]] = load_icon(icon_specifier)
 
         self._filename_icons = {}
-        for filename, icon_specifier in settings['filenames'].iteritems():
+        for filename, icon_specifier in settings['filenames'].items():
             self._filename_icons[filename] = load_icon(icon_specifier)
 
         self._extension_icons = {}
-        for extension, icon_specifier in settings['extensions'].iteritems():
+        for extension, icon_specifier in settings['extensions'].items():
             self._extension_icons[extension] = load_icon(icon_specifier)
 
         self._file_default_icon = load_icon(settings['file_default'])

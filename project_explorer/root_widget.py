@@ -5,22 +5,24 @@ Licensed under the MIT License, see LICENSE in the project root for full license
 Tree based file system browser widget for browsing the file tree from a movable root.
 '''
 
+# pylint: disable=C0103
+
 import os
 import datetime
 import shutil
 import string
 import subprocess
 
-from PySide.QtCore import (
+from qtpy.QtCore import (
     Signal,
     Qt,
     QDir,
     QUrl,
     QMimeData,
+    QSortFilterProxyModel,
 )
 
-from PySide.QtGui import (
-    QSortFilterProxyModel,
+from qtpy.QtWidgets import (
     QFrame,
     QApplication,
     QAction,
@@ -60,6 +62,9 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         self.invalidateFilter()
 
     def filterAcceptsRow(self, source_row, source_parent):
+        '''
+        Applies the filtering.
+        '''
         model = self.sourceModel()
 
         index = model.index(source_row, 0, source_parent)
@@ -70,24 +75,6 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         extension = os.path.splitext(model.filePath(index))[1]
 
         return extension not in self._filter_extensions
-
-    def setData(self, index, value, role):
-        '''
-        Modify a file system item name.
-        '''
-        if role == Qt.EditRole:
-            # Fix issue where setting a name to the same name in a different case causes an error.
-            # This issue is caused by a Qt bug (https://bugreports.qt.io/browse/QTBUG-3570).
-            try:
-                source = self.filePath(index)
-                os.rename(source, os.path.join(os.path.dirname(source), value))
-            except:
-                return False
-            else:
-                self.dataChanged.emit(index, index)
-                return True
-        else:
-            raise Exception('Unexpected model modification.')
 
     def isDir(self, index):
         '''
@@ -111,11 +98,7 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         '''
         Pass through to QFileSystemModel
         '''
-        self.setDynamicSortFilter(False)
-        result = self.sourceModel().remove(self.mapToSource(index))
-        self.sort(self.sortOrder())
-        self.setDynamicSortFilter(True)
-        return result
+        return self.sourceModel().remove(self.mapToSource(index))
 
     def fileName(self, index):
         '''
@@ -428,7 +411,9 @@ class RootWidget(QFrame):
 
         # TODO:
         # elif mime_data.hasText():
+            # create text file with contents
         # elif mime_data.hasImage():
+            # create image file with contents
 
     def current_item_directory(self):
         '''

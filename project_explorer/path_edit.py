@@ -8,13 +8,13 @@ A line edit for editing paths.
 import os
 import itertools
 
-from PySide.QtCore import (
+from qtpy.QtCore import (
     Signal,
     Qt,
     QEvent,
 )
 
-from PySide.QtGui import QLineEdit
+from qtpy.QtWidgets import QLineEdit
 
 import path_utils
 
@@ -91,12 +91,12 @@ class PathEdit(QLineEdit):
             self.new_path.emit('This PC')
             return
         elif (
-            (
-                previous_text is not None
-                and text == previous_text[:-1]
-                and previous_text.endswith(('/', '\\'))
-            )
-            or os.path.isfile(text)
+                (
+                    previous_text is not None
+                    and text == previous_text[:-1]
+                    and previous_text.endswith(('/', '\\'))
+                )
+                or os.path.isfile(text)
         ):
             # If the path separator has been deleted, or the text is a file path, then go to the
             # dirname.
