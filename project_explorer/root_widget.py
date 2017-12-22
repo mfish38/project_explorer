@@ -12,6 +12,9 @@ import datetime
 import shutil
 import string
 import subprocess
+from functools import lru_cache
+
+import ntfsutils.junction
 
 from qtpy.QtCore import (
     Signal,
@@ -38,6 +41,10 @@ from qtpy.QtWidgets import (
 import path_utils
 from json_file_icon_provider import JSONFileIconProvider
 from path_edit import PathEdit
+
+@lru_cache(maxsize=1024)
+def _cached_isjunction(path):
+    return ntfsutils.junction.isjunction(path)
 
 class FileSystemProxyModel(QSortFilterProxyModel):
     '''
@@ -67,13 +74,16 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         '''
         model = self.sourceModel()
 
+        # Get the row info.
         index = model.index(source_row, 0, source_parent)
+        path = model.filePath(index)
 
+        # Filter out junctions as QFileSystemModel does not work well with them.
         if model.isDir(index):
-            return True
+            return not _cached_isjunction(path)
 
-        extension = os.path.splitext(model.filePath(index))[1]
-
+        # Apply extension filtering.
+        extension = os.path.splitext(path)[1]
         return extension not in self._filter_extensions
 
     def isDir(self, index):
@@ -159,7 +169,8 @@ class RootWidget(QFrame):
             JSONFileIconProvider('file_view_icons.json')
         )
         model.setFilter(
-            QDir.AllEntries | QDir.NoDotAndDotDot | QDir.AllDirs | QDir.Hidden)
+            QDir.AllEntries | QDir.NoDotAndDotDot | QDir.AllDirs | QDir.Hidden
+        )
 
         self._model = FileSystemProxyModel()
         self._model.setSourceModel(model)

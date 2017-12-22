@@ -11,6 +11,7 @@ setup(
     packages=['project_explorer'],
     install_requires=[
         'qtpy',
+        'ntfsutils'
     ],
     include_package_data=True,
     zip_safe=False,
