@@ -7,69 +7,74 @@
 
 {
 
-// List of file extensions that should not be shown.
-"filter_extensions" : [
-    ".pyc"
-],
+    // List of file extensions that should not be shown.
+    "filter_extensions" : [
+        ".pyc"
+    ],
 
-// Open with settings that override the system settings.
-// This should be a dictionary keyed by extension (including .), with the command to run as the
-// value. In this command string {path} will be replaced with the path of the file that is being
-// opened.
-"open_with" : {
-    // ".py" : "\"C:/Program Files (x86)/Notepad++/notepad++.exe\" {path}"
-},
+    // Open with settings that override the system settings.
+    // This should be a dictionary keyed by extension (including .), with the command to run as the
+    // value. In this command string {path} will be replaced with the path of the file that is being
+    // opened.
+    "open_with" : {
+        // ".py" : "\"C:/Program Files (x86)/Notepad++/notepad++.exe\" {path}"
+    },
 
-// Selected items context menu.
-// This should be a list of dictionaries, where each dictionary can have:
-//      - label (required)
-//          The text to show in the context menu.
-//
-//      - command (required)
-//          The command string to execute when the menu item is selected.
-//
-//          In this string, {0}, {1}, etc... can be used and will be replaced with the first,
-//          second, and so on file paths. If the number of selected paths differs from the highest
-//          path reference + 1, the menu item will be disabled.
-//
-//          {selected} will be replaced with the full list of selected paths. If this is specified,
-//          and there are no selected items, then the menu item will be disabled.
-//
-//          {current_directory} will be replaced with the directory containing the current item, or
-//          the current item if it is a directory. If there is no current item, the menu item will
-//          be disabled.
-//
-//      - extensions
-//          A list of extensions (including the dot). If this is specified then the menu item will
-//          be disabled if any of the selected items is not a file that has an extension in this
-//          list.
-//
-//      - hide_if_disabled
-//          If specified and true, then the menu item will not be visible if it is disabled.
-"context_menu" : [
-    {
-        "label"            : "Run",
-        "command"          : "start cmd /k \"cd /d {current_directory} & python {0}\"",
-        "extensions"       : [".py"],
-        "hide_if_disabled" : true
-    },
-    {
-        "label"   : "Shell Here",
-        "command" : "start cmd /k cd /d {current_directory}"
-    },
-    {
-        "label"   : "Diff Selected",
-        "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}"
+    // Selected items context menu.
+    // This should be a list of dictionaries, where each dictionary can have:
+    //      - label (required)
+    //          The text to show in the context menu.
+    //
+    //      - command (required)
+    //          The command string to execute when the menu item is selected.
+    //
+    //          In this string, {0}, {1}, etc... can be used and will be replaced with the first,
+    //          second, and so on file paths. If the number of selected paths differs from the highest
+    //          path reference + 1, the menu item will be disabled.
+    //
+    //          {selected} will be replaced with the full list of selected paths. If this is specified,
+    //          and there are no selected items, then the menu item will be disabled.
+    //
+    //          {current_directory} will be replaced with the directory containing the current item, or
+    //          the current item if it is a directory. If there is no current item, the menu item will
+    //          be disabled.
+    //
+    //      - extensions
+    //          A list of extensions (including the dot). If this is specified then the menu item will
+    //          be disabled if any of the selected items is not a file that has an extension in this
+    //          list.
+    //
+    //      - hide_if_disabled
+    //          If specified and true, then the menu item will not be visible if it is disabled.
+    "context_menu" : [
+        {
+            "label"   : "Diff Selected",
+            "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}",
+            "hide_if_disabled" : true
+        },
+        {
+            "label"            : "Run",
+            "command"          : "start cmd /k \"cd /d {current_directory} & python {0}\"",
+            "extensions"       : [".py"],
+            "hide_if_disabled" : true
+        },
+        {
+            "label"   : "Shell Here",
+            "command" : "start cmd /k cd /d {current_directory}"
+        },
+        {
+            "label"   : "Explorer Here",
+            "command" : "cmd /c cd /d & explorer ."
+        }
+    ],
+
+    // Directory to store trash in.
+    "trash_directory" : ".trash",
+
+    // Directory to store projects in.
+    "projects_directory" : ".projects",
+
+    // Path to the theme file to use.
+    "theme" : "default_theme.css"
+
     }
-],
-
-// Directory to store trash in.
-"trash_directory" : ".trash",
-
-// Directory to store projects in.
-"projects_directory" : ".projects",
-
-// Path to the theme file to use.
-"theme" : "default_theme.css"
-
-}
