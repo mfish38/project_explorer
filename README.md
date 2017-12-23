@@ -2,7 +2,7 @@
 A simple file browser that uses project based concepts.
 
 ## Features
-- Projects with multiple folder roots
+- Projects with multiple root folders
 - Configurable right click file/folder menus
     - JSON configurable
     - Context sensitive
