@@ -9,8 +9,8 @@ A simple file browser that uses project based concepts.
     - Execute custom commands
 - Fast directory traversal:
     - Case insensitive tab completion
-    - Backspace at end of path for navigating up
     - Location will automatically change as paths are typed
+    - Backspace at end of path for navigating up
 - Themeable in Qt's CSS extended with SCSS
 
 ## Screenshots
