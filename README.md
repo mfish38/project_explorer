@@ -1,8 +1,19 @@
 # project_explorer
 A simple file browser that uses project based concepts.
 
-Each tab represents a different project, and each project can have multiple roots open. A root is a folder that needs to be viewed to work on the project.
+## Features
+- Projects with multiple folder roots
+- Configurable right click file/folder menus
+    - JSON configurable
+    - Context sensitive
+    - Execute custom commands
+- Fast directory traversal:
+    - Case insensitive tab completion
+    - Backspace at end of path for navigating up
+    - Location will automatically change as paths are typed
+- Themeable in Qt's CSS extended with SCSS
 
+## Screenshots
 ![alt text](images/screenshot_1.png "Screenshot")
 
 ## Installation
