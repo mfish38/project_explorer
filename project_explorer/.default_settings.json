@@ -79,6 +79,6 @@
     "projects_directory" : ".projects",
 
     // Path to the theme file to use.
-    "theme" : "default_theme.css"
+    "theme" : "default_theme.scss"
 
     }

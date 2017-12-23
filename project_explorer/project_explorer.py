@@ -11,6 +11,8 @@ import json
 import shutil
 import ctypes
 
+import scss
+
 from qtpy.QtCore import (
     Signal,
     Qt,
@@ -344,6 +346,8 @@ class ProjectExplorer(QFrame):
                 'Unable to load theme:\n"{}"'.format(theme_path))
 
             return
+
+        style_sheet = scss.Compiler().compile_string(style_sheet)
 
         self.setStyleSheet(style_sheet)
 

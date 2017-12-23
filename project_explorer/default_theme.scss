@@ -1,0 +1,176 @@
+/*
+Copyright (c) 2017 Mark Fisher
+Licensed under the MIT License, see LICENSE in the project root for full license.
+
+This file will be compiled using pyScss.
+
+See http://doc.qt.io/qt-5/stylesheet-reference.html for base css syntax.
+*/
+
+// Pallete constants ///////////////////////////////////////////////////////////////////////////////
+// Modify these to make simple pallete changes to the theme.
+
+$tab_color: #999999;
+$tab_inactive_color: #7D7D7D;
+$tab_icon_hover_color: #999999;
+$tab_close_hover_color: rgb(255, 144, 144);
+$tab_tray_color: #666666;
+
+$path_background_color: white;
+
+$project_icon_hover_color: #777777;
+
+$tree_background_color: #333333;
+$tree_text_color: #BBBBBB;
+$tree_highlight_color: #444444;
+$tree_selection_color: #555555;
+$tree_arrow_hover_color: #444444;
+
+// Constants ///////////////////////////////////////////////////////////////////////////////////////
+$icon_folder: icons/material-design-icons;
+
+// Rules ///////////////////////////////////////////////////////////////////////////////////////////
+
+QToolButton {
+    border: none;
+}
+
+QToolBar {
+    border: none;
+}
+
+ProjectExplorer QToolBar QToolButton:hover {
+    background: $tab_icon_hover_color;
+}
+
+ProjectExplorer QToolBar QToolButton#open_project {
+    qproperty-icon: url(#{$icon_folder}/action/drawable-xxxhdpi/ic_open_in_browser_black_18dp.png);
+}
+
+ProjectExplorer QToolBar QToolButton#new_project {
+    qproperty-icon: url(#{$icon_folder}/av/drawable-xxxhdpi/ic_fiber_new_black_18dp.png);
+}
+
+ProjectExplorer QToolBar QToolButton#settings {
+    qproperty-icon: url(#{$icon_folder}/action/drawable-xxxhdpi/ic_settings_black_18dp.png);
+}
+
+/* Hide tab tear indicator. */
+ExtendedTabBar QTabBar::tear {
+    width: 0px;
+    border: none;
+}
+
+ExtendedTabBar {
+    background-color: $tab_tray_color;
+    padding-left: 0px;
+    padding-right: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+ExtendedTabBar QTabBar::tab {
+    border: 2px solid $tab_tray_color;
+    border-left: none;
+    padding: 5px;
+    background: $tab_inactive_color;
+}
+
+ExtendedTabBar QTabBar::tab:selected {
+    background: $tab_color;
+}
+
+ExtendedTabBar QTabBar::tab:hover {
+    background: $tab_color;
+}
+
+ExtendedTabBar QTabBar::close-button {
+    image: url(#{$icon_folder}/navigation/drawable-xxxhdpi/ic_close_black_18dp.png);
+}
+
+ExtendedTabBar QTabBar::close-button:hover {
+    background: $tab_close_hover_color;
+}
+
+Project {
+    background-color: $tab_color;
+}
+
+Project QSplitter::handle {
+    background-color: $tab_color;
+}
+
+Project QToolBar QToolButton:hover {
+    background: $project_icon_hover_color;
+}
+
+Project QToolBar QToolButton#save_project {
+    qproperty-icon: url(#{$icon_folder}/content/drawable-xxxhdpi/ic_save_black_18dp.png);
+}
+Project QToolBar QToolButton#add_root {
+    qproperty-icon: url(#{$icon_folder}/av/drawable-xxxhdpi/ic_playlist_add_black_18dp.png);
+}
+
+Project QToolBar QToolButton#open_trash {
+    qproperty-icon: url(#{$icon_folder}/action/drawable-xxxhdpi/ic_delete_black_18dp.png);
+}
+
+PathEdit {
+    border: none;
+    padding-bottom: 1px;
+    background: $path_background_color;
+}
+
+RootWidget QTreeView {
+    border: none;
+    background: $tree_background_color;
+}
+
+RootWidget QTreeView QLineEdit {
+    border: none;
+}
+
+RootWidget QTreeView::item {
+    color: $tree_text_color;
+}
+
+RootWidget QTreeView::item:hover {
+    background: $tree_highlight_color;
+}
+
+RootWidget QTreeView::item:selected {
+    background: $tree_selection_color;
+}
+
+RootWidget QTreeView::branch:open:hover {
+    background: $tree_arrow_hover_color;
+}
+
+RootWidget QTreeView::branch:closed:has-children:hover {
+    background: $tree_arrow_hover_color;
+}
+
+RootWidget QTreeView::branch:open {
+    image: url(#{$icon_folder}/hardware/drawable-xxxhdpi/ic_keyboard_arrow_down_black_18dp.png);
+}
+
+RootWidget QTreeView::branch:closed:has-children {
+    image: url(#{$icon_folder}/hardware/drawable-xxxhdpi/ic_keyboard_arrow_right_black_18dp.png);
+}
+
+RootWidget QToolBar QToolButton#new_file {
+    qproperty-icon: url(#{$icon_folder}/action/drawable-xxxhdpi/ic_note_add_black_18dp.png);
+}
+
+RootWidget QToolBar QToolButton#new_directory {
+    qproperty-icon: url(#{$icon_folder}/file/drawable-xxxhdpi/ic_create_new_folder_black_18dp.png);
+}
+
+RootWidget QToolBar QToolButton#close_root {
+    qproperty-icon: url(#{$icon_folder}/navigation/drawable-xxxhdpi/ic_close_black_18dp.png);
+}
+
+ProjectExplorer {
+    background: $tab_color;
+    qproperty-windowIcon: url(#{$icon_folder}/file/drawable-xxxhdpi/ic_folder_black_18dp.png);
+}
