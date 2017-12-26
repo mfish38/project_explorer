@@ -52,6 +52,7 @@ class Project(QFrame):
 
         # --- setup the splitter ---
         self._splitter = QSplitter()
+        self._splitter.setContentsMargins(0, 0, 0, 0)
         self._splitter.setOrientation(Qt.Vertical)
 
         self._set_closeing_disabled(True)
@@ -76,6 +77,8 @@ class Project(QFrame):
 
         # --- setup the layout ---
         main_layout = QVBoxLayout()
+        main_layout.setSpacing(0)
+        main_layout.setContentsMargins(4, 2, 4, 0)
 
         main_layout.addWidget(self._splitter)
         main_layout.addWidget(tool_bar)

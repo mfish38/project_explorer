@@ -231,8 +231,11 @@ class RootWidget(QFrame):
         # --- setup the layout ---
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
 
         path_layout = QHBoxLayout()
+        path_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
         path_layout.addWidget(self._root_edit)
         path_layout.addWidget(tool_bar)
         main_layout.addLayout(path_layout)

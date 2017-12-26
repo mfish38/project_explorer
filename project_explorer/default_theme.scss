@@ -26,6 +26,8 @@ $tree_highlight_color: #444444;
 $tree_selection_color: #555555;
 $tree_arrow_hover_color: #444444;
 
+$splitter_handle_color: #505050;
+
 // Constants ///////////////////////////////////////////////////////////////////////////////////////
 $icon_folder: icons/material-design-icons;
 
@@ -97,7 +99,7 @@ Project {
 }
 
 Project QSplitter::handle {
-    background-color: $tab_color;
+    background: $splitter_handle_color;
 }
 
 Project QToolBar QToolButton:hover {
@@ -116,8 +118,8 @@ Project QToolBar QToolButton#open_trash {
 }
 
 PathEdit {
-    border: none;
-    padding-bottom: 1px;
+    border: 0px;
+    padding-bottom: 2px;
     background: $path_background_color;
 }
 
@@ -156,6 +158,11 @@ RootWidget QTreeView::branch:open {
 
 RootWidget QTreeView::branch:closed:has-children {
     image: url(#{$icon_folder}/hardware/drawable-xxxhdpi/ic_keyboard_arrow_right_black_18dp.png);
+}
+
+QToolBar {
+    margin: 0px;
+    padding: 0px;
 }
 
 RootWidget QToolBar QToolButton#new_file {
