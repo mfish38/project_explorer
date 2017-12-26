@@ -8,6 +8,7 @@ Tree based file system browser widget for browsing the file tree from a movable 
 # pylint: disable=C0103
 
 import os
+import re
 import datetime
 import shutil
 import string
@@ -55,16 +56,16 @@ class FileSystemProxyModel(QSortFilterProxyModel):
 
         self.setDynamicSortFilter(True)
 
-        self._filter_extensions = set()
+        self._regex_filters = []
 
-    def filter_extensions(self, extensions):
+    def set_regex_filters(self, filters):
         '''
         Sets the model to filter out files with the given extension.
 
-        extensions:
-            A list of extensions to filter out. Empty list to stop filtering.
+        filters:
+            A list of regular expressions to filter out. Empty list to stop filtering.
         '''
-        self._filter_extensions = set(extensions)
+        self._regex_filters = [re.compile(filter) for filter in filters]
 
         self.invalidateFilter()
 
@@ -79,12 +80,11 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         path = model.filePath(index)
 
         # Filter out junctions as QFileSystemModel does not work well with them.
-        if model.isDir(index):
-            return not _cached_isjunction(path)
-
-        # Apply extension filtering.
-        extension = os.path.splitext(path)[1]
-        return extension not in self._filter_extensions
+        if _cached_isjunction(path):
+            return False
+        
+        # Apply regex filtering.
+        return not any((filter.fullmatch(path) for filter in self._regex_filters))
 
     def isDir(self, index):
         '''
@@ -356,7 +356,7 @@ class RootWidget(QFrame):
         '''
         self._settings = new_settings
 
-        self._model.filter_extensions(new_settings['filter_extensions'])
+        self._model.set_regex_filters(new_settings['regex_filters'])
 
     def keyPressEvent(self, event):
         '''

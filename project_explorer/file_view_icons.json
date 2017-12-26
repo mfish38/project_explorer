@@ -37,6 +37,7 @@
         "cpp" : "icons/a-file-icon/icons/multi/file_type_cpp.png",
 
         "css" : "icons/a-file-icon/icons/multi/file_type_css.png",
+        "scss" : "icons/a-file-icon/icons/multi/file_type_scss.png",
 
         "csv" : "icons/a-file-icon/icons/multi/file_type_csv.png",
 
@@ -150,7 +151,6 @@
         // "" : "icons/a-file-icon/icons/multi/file_type_rust.png",
         // "" : "icons/a-file-icon/icons/multi/file_type_sass.png",
         // "" : "icons/a-file-icon/icons/multi/file_type_scala.png",
-        // "" : "icons/a-file-icon/icons/multi/file_type_scss.png",
         // "" : "icons/a-file-icon/icons/multi/file_type_settings.png",
         // "" : "icons/a-file-icon/icons/multi/file_type_sketch.png",
         // "" : "icons/a-file-icon/icons/multi/file_type_slim.png",

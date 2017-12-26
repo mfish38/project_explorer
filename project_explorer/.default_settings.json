@@ -7,9 +7,13 @@
 
 {
 
-    // List of file extensions that should not be shown.
-    "filter_extensions" : [
-        ".pyc"
+    // Paths matching any of these regular expressions will not be shown.
+    "regex_filters" : [
+        ".*/\\.git",
+        ".*/\\.coverage",
+        ".*\\.pyc",
+        ".*\\.egg-info",
+        ".*/__pycache__"
     ],
 
     // Open with settings that override the system settings.
