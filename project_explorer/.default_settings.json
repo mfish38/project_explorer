@@ -33,20 +33,20 @@
     //          The command string to execute when the menu item is selected.
     //
     //          In this string, {0}, {1}, etc... can be used and will be replaced with the first,
-    //          second, and so on file paths. If the number of selected paths differs from the highest
-    //          path reference + 1, the menu item will be disabled.
+    //          second, and so on file paths. If the number of selected paths differs from the
+    //          highest path reference + 1, the menu item will be disabled.
     //
-    //          {selected} will be replaced with the full list of selected paths. If this is specified,
-    //          and there are no selected items, then the menu item will be disabled.
+    //          {selected} will be replaced with the full list of selected paths. If this is
+    //          specified, and there are no selected items, then the menu item will be disabled.
     //
-    //          {current_directory} will be replaced with the directory containing the current item, or
-    //          the current item if it is a directory. If there is no current item, the menu item will
-    //          be disabled.
+    //          {current_directory} will be replaced with the directory containing the current item,
+    //          or the current item if it is a directory. If there is no current item, the menu item
+    //          will be disabled.
     //
     //      - extensions
-    //          A list of extensions (including the dot). If this is specified then the menu item will
-    //          be disabled if any of the selected items is not a file that has an extension in this
-    //          list.
+    //          A list of extensions (including the dot). If this is specified then the menu item
+    //          will be disabled if any of the selected items is not a file that has an extension in
+    //          this list.
     //
     //      - hide_if_disabled
     //          If specified and true, then the menu item will not be visible if it is disabled.
@@ -85,4 +85,4 @@
     // Path to the theme file to use.
     "theme" : "default_theme.scss"
 
-    }
+}
