@@ -13,7 +13,6 @@ import datetime
 import shutil
 import string
 import subprocess
-from functools import lru_cache
 
 import ntfsutils.junction
 
@@ -42,10 +41,6 @@ from qtpy.QtWidgets import (
 import path_utils
 from json_file_icon_provider import JSONFileIconProvider
 from path_edit import PathEdit
-
-@lru_cache(maxsize=1024)
-def _cached_isjunction(path):
-    return ntfsutils.junction.isjunction(path)
 
 class FileSystemProxyModel(QSortFilterProxyModel):
     '''
@@ -80,7 +75,7 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         path = model.filePath(index)
 
         # Filter out junctions as QFileSystemModel does not work well with them.
-        if _cached_isjunction(path):
+        if ntfsutils.junction.isjunction(path):
             return False
         
         # Apply regex filtering.
