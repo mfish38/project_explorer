@@ -60,7 +60,7 @@
             "hide_if_disabled" : true
         },
         {
-            "label"            : "Package",
+            "label"            : "Build Wheel",
             "command"          : "start cmd /k \"cd /d {current_directory} & python setup.py bdist_wheel\"",
             "require"          : [".*/setup\\.py"],
             "hide_if_disabled" : true
