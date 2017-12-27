@@ -290,38 +290,41 @@ class RootWidget(QFrame):
                     if highest_field_number is None or field_number > highest_field_number:
                         highest_field_number = field_number
 
-            # Check if the menu item should be disabled.
+            # If field numbers were used, then the menu item will be disabled if the number of
+            # selected items does not equal the highest field number + 1.
             enabled = True
-            if (
-                    highest_field_number is not None
-                    and len(selected_items) != highest_field_number + 1
-                ):
-                # If field numbers were used, then the menu item will be disabled if the number of
-                # selected items does not equal the highest field number + 1.
+            if highest_field_number is not None and len(selected_items) != highest_field_number + 1:
                 enabled = False
-            elif 'selected' in field_names and len(selected_items) == 0:
-                # Disable the menu item if the command uses {selected}, but there is nothing
-                # selected.
+            
+            # Disable the menu item if the command uses {selected}, but there is nothing selected.
+            if enabled and 'selected' in field_names and len(selected_items) == 0:
                 enabled = False
-            elif 'current_directory' in field_names and current_directory is None:
-                # Disable the menu item if the command uses {current_directory}, but there is no
-                # current directory.
+                
+            # Disable the menu item if the command uses {current_directory}, but there is no
+            # current directory.
+            if enabled and 'current_directory' in field_names and current_directory is None:
                 enabled = False
-            else:
-                # Disable the menu item if an extensions list is specified, and one of the selected
-                # items is not a file with an extension in the list.
-                try:
-                    extensions = menu_item_setting['extensions']
-                except KeyError:
-                    pass
-                else:
-                    extensions = set(extensions)
+                
+            # Disable the menu item if any of the selected items don't match at least one of the
+            # given regex patterns.
+            if enabled and 'require' in menu_item_setting:
+                require_filters = menu_item_setting['require']
 
-                    for path in selected_items:
-                        if not os.path.isfile(path) or os.path.splitext(path)[1] not in extensions:
-                            enabled = False
-                            break
+                for path in selected_items:
+                    if not any((re.fullmatch(filter, path) for filter in require_filters)):
+                        enabled = False
+                        break     
+                        
+            # Disable the menu item if any of the selected items matches any of the given regex
+            # patterns
+            if enabled and 'exclude' in menu_item_setting:
+                exclude_filters = menu_item_setting['exclude']
 
+                for path in selected_items:
+                    if any((re.fullmatch(filter, path) for filter in exclude_filters)):
+                        enabled = False
+                        break
+                            
             if not enabled:
                 # On create a menu item if it is not specified to hide the item.
                 if not menu_item_setting.get('hide_if_disabled', False):

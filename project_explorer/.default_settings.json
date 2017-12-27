@@ -43,10 +43,13 @@
     //          or the current item if it is a directory. If there is no current item, the menu item
     //          will be disabled.
     //
-    //      - extensions
-    //          A list of extensions (including the dot). If this is specified then the menu item
-    //          will be disabled if any of the selected items is not a file that has an extension in
-    //          this list.
+    //      - require
+    //          A list of regular expression patterns. If this is specified then the menu item will
+    //          be disabled if any of the selected items doesn't match at least one of the patterns.
+    //
+    //      - exclude
+    //          A list of regular expression patterns. If this is specified then the menu item will
+    //          be disabled if any of the selected items matches at least one of the patterns.
     //
     //      - hide_if_disabled
     //          If specified and true, then the menu item will not be visible if it is disabled.
@@ -57,9 +60,16 @@
             "hide_if_disabled" : true
         },
         {
+            "label"            : "Package",
+            "command"          : "start cmd /k \"cd /d {current_directory} & python setup.py bdist_wheel\"",
+            "require"          : [".*/setup\\.py"],
+            "hide_if_disabled" : true
+        },
+        {
             "label"            : "Run",
             "command"          : "start cmd /k \"cd /d {current_directory} & python {0}\"",
-            "extensions"       : [".py"],
+            "require"          : [".*\\.py"],
+            "exclude"          : [".*/setup\\.py"],
             "hide_if_disabled" : true
         },
         {
