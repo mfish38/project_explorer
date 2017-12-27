@@ -60,20 +60,20 @@
             "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}"
         },
         {
-            "label"            : "Build Wheel",
-            "command"          : "start cmd /k \"cd /d {current_directory} & python setup.py bdist_wheel\"",
-            "require"          : [".*/setup\\.py"]
+            "label"   : "Build Wheel",
+            "command" : "start cmd /k \"cd /d {current_directory} & python setup.py bdist_wheel\"",
+            "require" : [".*/setup\\.py"]
         },
         {
-            "label"            : "Pylint",
-            "command"          : "start cmd /k \"cd /d {current_directory} & pylint -r n {0}\"",
-            "require"          : [".*\\.py"]
+            "label"   : "Pylint",
+            "command" : "start cmd /k \"cd /d {current_directory} & pylint -r n {0}\"",
+            "require" : [".*\\.py"]
         },
         {
-            "label"            : "Run",
-            "command"          : "start cmd /k \"cd /d {current_directory} & python {0}\"",
-            "require"          : [".*\\.py"],
-            "exclude"          : [".*/setup\\.py"]
+            "label"   : "Run",
+            "command" : "start cmd /k \"cd /d {current_directory} & python {0}\"",
+            "require" : [".*\\.py"],
+            "exclude" : [".*/setup\\.py"]
         },
         {
             "label"   : "Shell Here",
