@@ -66,6 +66,12 @@
             "hide_if_disabled" : true
         },
         {
+            "label"            : "Pylint",
+            "command"          : "start cmd /k \"cd /d {current_directory} & pylint -r n {0}\"",
+            "require"          : [".*\\.py"],
+            "hide_if_disabled" : true
+        },
+        {
             "label"            : "Run",
             "command"          : "start cmd /k \"cd /d {current_directory} & python {0}\"",
             "require"          : [".*\\.py"],
