@@ -566,17 +566,27 @@ class RootWidget(QFrame):
         '''
         Opens the file with the associated model index.
         '''
-        path = self._model.filePath(index)
-        _, extension = os.path.splitext(path)
+        # path = self._model.filePath(index)
+        # _, extension = os.path.splitext(path)
 
-        try:
-            open_with = self._settings['open_with'][extension]
-        except KeyError:
-            os.startfile(path)
+        # try:
+            # open_with = self._settings['open_with'][extension]
+        # except KeyError:
+            # os.startfile(path)
+        # else:
+            # path = '"{}"'.format(path)
+            # command = open_with.format(path=path)
+            # subprocess.Popen(command, shell=True)
+            
+        path = self._model.filePath(index)
+        
+        for pattern, command in self._settings['open_with']:
+            if re.fullmatch(pattern, path):
+                expanded_command = command.format(path='"{}"'.format(path))
+                subprocess.Popen(expanded_command, shell=True)
+                break
         else:
-            path = '"{}"'.format(path)
-            command = open_with.format(path=path)
-            subprocess.Popen(command, shell=True)
+            os.startfile(path)
 
     def _set_root_path(self, path):
         '''

@@ -17,12 +17,12 @@
     ],
 
     // Open with settings that override the system settings.
-    // This should be a dictionary keyed by extension (including .), with the command to run as the
-    // value. In this command string {path} will be replaced with the path of the file that is being
-    // opened.
-    "open_with" : {
-        // ".py" : "\"C:/Program Files (x86)/Notepad++/notepad++.exe\" {path}"
-    },
+    // This should be a list of regex patterns and commands. The command corresponding to the first
+    // pattern in the list will be executed. In the command string {path} will be replaced with the
+    // path of the file that is being opened.
+    "open_with" : [
+        // [".*\\.py", "\"C:/Program Files (x86)/Notepad++/notepad++.exe\" {path}"]
+    ],
 
     // Selected items context menu.
     // This should be a list of dictionaries, where each dictionary can have:
