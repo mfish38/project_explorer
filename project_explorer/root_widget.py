@@ -306,14 +306,18 @@ class RootWidget(QFrame):
                 enabled = False
                 
             # Disable the menu item if any of the selected items don't match at least one of the
-            # given regex patterns.
+            # given regex patterns. Note that if this is specified at least one item must be
+            # selected.
             if enabled and 'require' in menu_item_setting:
                 require_filters = menu_item_setting['require']
 
-                for path in selected_items:
-                    if not any((re.fullmatch(filter, path) for filter in require_filters)):
-                        enabled = False
-                        break     
+                if len(selected_items) == 0:
+                    enabled = False
+                else:
+                    for path in selected_items:
+                        if not any((re.fullmatch(filter, path) for filter in require_filters)):
+                            enabled = False
+                            break     
                         
             # Disable the menu item if any of the selected items matches any of the given regex
             # patterns
@@ -326,8 +330,8 @@ class RootWidget(QFrame):
                         break
                             
             if not enabled:
-                # On create a menu item if it is not specified to hide the item.
-                if not menu_item_setting.get('hide_if_disabled', False):
+                # Only create a menu item if it is not hidden.
+                if menu_item_setting.get('show_if_disabled', False):
                     action = SubprocessAction(menu_item_setting['label'], self)
                     action.setEnabled(False)
                     menu.addAction(action)
@@ -353,8 +357,9 @@ class RootWidget(QFrame):
             else:
                 action.command = command
 
-        # Show the menu.
-        menu.popup(self._view.mapToGlobal(point))
+        # Show the menu if it has entries.
+        if len(menu.actions()) != 0:
+            menu.popup(self._view.mapToGlobal(point))
 
     def update_settings(self, new_settings):
         '''

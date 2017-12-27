@@ -46,37 +46,34 @@
     //      - require
     //          A list of regular expression patterns. If this is specified then the menu item will
     //          be disabled if any of the selected items doesn't match at least one of the patterns.
+    //          Also, at least one item must be selected for the menu item to be enabled.
     //
     //      - exclude
     //          A list of regular expression patterns. If this is specified then the menu item will
     //          be disabled if any of the selected items matches at least one of the patterns.
     //
-    //      - hide_if_disabled
-    //          If specified and true, then the menu item will not be visible if it is disabled.
+    //      - show_if_disabled
+    //          If specified and true, then the menu item will be visible, even if it is disabled.
     "context_menu" : [
         {
             "label"   : "Diff Selected",
-            "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}",
-            "hide_if_disabled" : true
+            "command" : "\"c:/Program Files (x86)/WinMerge/WinMergeU.exe\" {0} {1}"
         },
         {
             "label"            : "Build Wheel",
             "command"          : "start cmd /k \"cd /d {current_directory} & python setup.py bdist_wheel\"",
-            "require"          : [".*/setup\\.py"],
-            "hide_if_disabled" : true
+            "require"          : [".*/setup\\.py"]
         },
         {
             "label"            : "Pylint",
             "command"          : "start cmd /k \"cd /d {current_directory} & pylint -r n {0}\"",
-            "require"          : [".*\\.py"],
-            "hide_if_disabled" : true
+            "require"          : [".*\\.py"]
         },
         {
             "label"            : "Run",
             "command"          : "start cmd /k \"cd /d {current_directory} & python {0}\"",
             "require"          : [".*\\.py"],
-            "exclude"          : [".*/setup\\.py"],
-            "hide_if_disabled" : true
+            "exclude"          : [".*/setup\\.py"]
         },
         {
             "label"   : "Shell Here",
@@ -88,7 +85,7 @@
         },
         {
             "label"   : "Explorer Here",
-            "command" : "cmd /c cd /d & explorer ."
+            "command" : "cmd /c \"cd /d {current_directory} & explorer .\""
         }
     ],
 
