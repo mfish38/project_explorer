@@ -33,7 +33,7 @@ pip install project_explorer
 To create a Windows desktop shortcut, Right Click->New->Shortcut and set the location to:
 
 ```
-pythonw.exe -m project_explorer.project_explorer
+pythonw.exe -m project_explorer
 ```
 
 ## Actions
