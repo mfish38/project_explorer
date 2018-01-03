@@ -46,7 +46,7 @@ from qtpy.QtCore import QFileInfo
 from qtpy.QtWidgets import QFileIconProvider
 from qtpy.QtGui import QIcon
 
-import extended_json
+from . import extended_json
 
 class JSONFileIconProvider(QFileIconProvider):
     '''

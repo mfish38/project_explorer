@@ -38,9 +38,9 @@ from qtpy.QtWidgets import (
     QMenu,
 )
 
-import path_utils
-from json_file_icon_provider import JSONFileIconProvider
-from path_edit import PathEdit
+from . import path_utils
+from .json_file_icon_provider import JSONFileIconProvider
+from .path_edit import PathEdit
 
 class FileSystemProxyModel(QSortFilterProxyModel):
     '''

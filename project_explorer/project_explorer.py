@@ -32,9 +32,9 @@ from qtpy.QtWidgets import (
     QFileDialog,
 )
 
-from extended_tabs import ExtendedTabBar, ExtendedTabWidget
-import extended_json
-from root_widget import RootWidget
+from .extended_tabs import ExtendedTabBar, ExtendedTabWidget
+from . import extended_json
+from .root_widget import RootWidget
 
 SETTINGS_PATH = '.settings.json'
 DEFAULT_SETTINGS_PATH = '.default_settings.json'

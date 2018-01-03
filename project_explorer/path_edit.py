@@ -16,7 +16,7 @@ from qtpy.QtCore import (
 
 from qtpy.QtWidgets import QLineEdit
 
-import path_utils
+from . import path_utils
 
 _PATH_SEPARATOR = '/'
 
