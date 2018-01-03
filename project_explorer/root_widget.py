@@ -152,6 +152,7 @@ class RootWidget(QFrame):
     This widget provides a view of a project root.
     '''
     close_request = Signal()
+    open_request = Signal(str)
 
     def __init__(self, settings, path=None):
         super(RootWidget, self).__init__()
@@ -552,11 +553,18 @@ class RootWidget(QFrame):
     def _handle_activated_index(self, index):
         '''
         This slot handles the activation of items in the view. If the activated item is a directory,
-        then the view will change to that directory. Otherwise, the item will be opened.
+        then the view will change to that directory. If ctrl is held, then the directory will open in
+        a new root. If the item is a file, the item will be opened.
         '''
         if self._model.isDir(index):
+            modifiers = QApplication.keyboardModifiers()
+            if modifiers == Qt.ControlModifier:
+                # Send a request for opening a new root.
+                self.open_request.emit(self._model.filePath(index))
+                return
+            
+            # Change the root directory.
             self._move_root_index(index)
-
             path = self._model.filePath(self._view.rootIndex())
             self._root_edit.update(path)
         else:

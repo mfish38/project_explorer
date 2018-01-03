@@ -36,12 +36,14 @@ To create a Windows desktop shortcut, Right Click->New->Shortcut and set the loc
 pythonw.exe -m project_explorer.project_explorer
 ```
 
-## Keyboard Shortcuts
+## Actions
 
-| Action               | Keys                            |
-| -------------------- | ------------------------------- |
-| Autocomplete Path    | <kbd>Tab</kbd>                  |
-| Copy File/Directory  | <kbd>Ctrl</kbd>+<kbd>C</kbd>    |
-| Paste File/Directory | <kbd>Ctrl</kbd>+<kbd>V</kbd>    |
-| Trash Selected       | <kbd>Del</kbd>                  |
-| Delete Selected      | <kbd>Shift</kbd>+<kbd>Del</kbd> |
+| Action                  | Keys                                    |
+| ------------------------| ----------------------------------------|
+| Autocomplete Path       | <kbd>Tab</kbd>                          |
+| Copy File/Directory     | <kbd>Ctrl</kbd>+<kbd>C</kbd>            |
+| Paste File/Directory    | <kbd>Ctrl</kbd>+<kbd>V</kbd>            |
+| Trash Selected          | <kbd>Del</kbd>                          |
+| Delete Selected         | <kbd>Shift</kbd>+<kbd>Del</kbd>         |
+| Open Folder In New Root | <kbd>Ctrl</kbd>+<kbd>Double Click</kbd> |
+| Open Folder In New Root | <kbd>Ctrl</kbd>+<kbd>Enter</kbd>        |

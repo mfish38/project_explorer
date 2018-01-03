@@ -120,6 +120,7 @@ class Project(QFrame):
         '''
         root_widget = RootWidget(self._settings, path)
         root_widget.close_request.connect(self.handle_close_request)
+        root_widget.open_request.connect(self.add_root)
 
         self._splitter.addWidget(root_widget)
 
