@@ -14,7 +14,7 @@ A simple file browser that uses project based concepts.
 - Themeable in Qt's CSS extended with SCSS
 
 ## Screenshots
-![alt text](images/screenshot_1.png "Screenshot")
+![alt text](images/screenshot_2.png "Screenshot")
 
 ## Installation
 
