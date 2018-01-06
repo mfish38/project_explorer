@@ -178,6 +178,7 @@ class RootWidget(QFrame):
         self._view.activated.connect(self._handle_activated_index)
         self._view.setSortingEnabled(True)
         self._view.setHeaderHidden(True)
+        self._view.setExpandsOnDoubleClick(False)
         self._view.sortByColumn(0, Qt.AscendingOrder)
 
         # Setup drag and drop.
