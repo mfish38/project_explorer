@@ -23,6 +23,7 @@ from qtpy.QtCore import (
     QUrl,
     QMimeData,
     QSortFilterProxyModel,
+    QEvent,
 )
 
 from qtpy.QtWidgets import (
@@ -206,6 +207,9 @@ class RootWidget(QFrame):
         self._root_edit = PathEdit()
         self._root_edit.new_path.connect(self._set_root_path)
 
+        self._view.setFocusProxy(self._root_edit)
+        self._root_edit.installEventFilter(self)
+        
         # --- setup the tool bar ---
         tool_bar = QToolBar()
 
@@ -248,6 +252,23 @@ class RootWidget(QFrame):
         self._settings = None
         self.update_settings(settings)
 
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.KeyPress:
+            if object is self._root_edit:
+                # Send navigation key presses to the tree view.
+                if event.key() in {
+                    Qt.Key_Up,
+                    Qt.Key_Down,
+                    Qt.Key_Left,
+                    Qt.Key_Right,
+                    Qt.Key_Enter,
+                    Qt.Key_Return,
+                }:
+                    self._view.event(event)
+                    return True
+                
+        return False
+        
     def _context_menu(self, point):
         '''
         Opens a context menu generated from the user settings.
