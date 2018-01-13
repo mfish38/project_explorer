@@ -413,6 +413,12 @@ class RootWidget(QFrame):
         '''
         Copies all of the selected items to the clipboard.
         '''
+        # Copy selected text edit if there is any.
+        if self._root_edit.selectedText():
+            self._root_edit.copy()
+            return
+        
+        # Copy the urls of the selected files to the clipboard.
         filePath = self._model.filePath
         urls = [QUrl.fromLocalFile(filePath(index)) for index in self._view.selectedIndexes()]
 
@@ -424,15 +430,16 @@ class RootWidget(QFrame):
 
     def _paste(self):
         '''
-        Pastes files/folders from the clipboard.
+        Handles paste events.
         '''
+        # Get the clipboard contents.
         clipboard = QApplication.clipboard()
-
         mime_data = clipboard.mimeData()
 
         destination_directory = self.current_directory()
-
+        
         if mime_data.hasUrls():
+            # If the clipboard contains urls, copy from the sources.
             paths = [url.toLocalFile() for url in mime_data.urls() if url.isLocalFile()]
 
             for path in paths:
@@ -447,10 +454,10 @@ class RootWidget(QFrame):
                 elif os.path.isfile(path):
                     destination = path_utils.versioned_name(destination_directory, basename)
                     shutil.copy2(path, destination)
-
+        elif mime_data.hasText():
+            # If the clipboard contains text, paste it to the root edit.
+            self._root_edit.paste()
         # TODO:
-        # elif mime_data.hasText():
-            # create text file with contents
         # elif mime_data.hasImage():
             # create image file with contents
 
