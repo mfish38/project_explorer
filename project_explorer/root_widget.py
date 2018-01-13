@@ -416,6 +416,7 @@ class RootWidget(QFrame):
         # Copy selected text edit if there is any.
         if self._root_edit.selectedText():
             self._root_edit.copy()
+            self._root_edit.deselect()
             return
         
         # Copy the urls of the selected files to the clipboard.
