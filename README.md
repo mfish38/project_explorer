@@ -29,18 +29,21 @@ pip install project_explorer
 ```
 
 ## Running
-
-To create a Windows desktop shortcut, Right Click->New->Shortcut and set the location to:
+The following command will launch project_explorer:
 
 ```
 pythonw.exe -m project_explorer
 ```
+
+A Windows desktop shortcut can be created by Right Click->New->Shortcut and setting the location to
+the command.
 
 ## Actions
 
 | Action                  | Keys                                    |
 | ------------------------| ----------------------------------------|
 | Autocomplete Path       | <kbd>Tab</kbd>                          |
+| Move Up                 | <kbd>Backspace</kbd>                    |
 | Copy File/Directory     | <kbd>Ctrl</kbd>+<kbd>C</kbd>            |
 | Paste File/Directory    | <kbd>Ctrl</kbd>+<kbd>V</kbd>            |
 | Trash Selected          | <kbd>Del</kbd>                          |
