@@ -254,9 +254,31 @@ class RootWidget(QFrame):
 
     def eventFilter(self, object, event):
         if event.type() == QEvent.KeyPress:
+            key = event.key()
+            modifiers = QApplication.keyboardModifiers()
+        
             if object is self._root_edit:
+                if key == Qt.Key_Delete:
+                    if modifiers == Qt.ShiftModifier:
+                        self._delete_selected()
+                        return True
+                    elif modifiers == Qt.NoModifier:
+                        self._trash_selected()
+                        return True
+                # TODO:
+                # elif key == Qt.Key_X:
+                    # if modifiers == Qt.ControlModifier:
+                        # self._cut()
+                elif key == Qt.Key_C:
+                    if modifiers == Qt.ControlModifier:
+                        self._copy()
+                        return True
+                elif key == Qt.Key_V:
+                    if modifiers == Qt.ControlModifier:
+                        self._paste()
+                        return True
                 # Send navigation key presses to the tree view.
-                if event.key() in {
+                elif key in {
                     Qt.Key_Up,
                     Qt.Key_Down,
                     Qt.Key_Left,
@@ -386,29 +408,6 @@ class RootWidget(QFrame):
         self._settings = new_settings
 
         self._model.set_regex_filters(new_settings['regex_filters'])
-
-    def keyPressEvent(self, event):
-        '''
-        Handle short cuts key presses.
-        '''
-        key = event.key()
-        modifiers = QApplication.keyboardModifiers()
-
-        if key == Qt.Key_Delete:
-            if modifiers == Qt.ShiftModifier:
-                self._delete_selected()
-            elif modifiers == Qt.NoModifier:
-                self._trash_selected()
-        # TODO:
-        # elif key == Qt.Key_X:
-            # if modifiers == Qt.ControlModifier:
-                # self._cut()
-        elif key == Qt.Key_C:
-            if modifiers == Qt.ControlModifier:
-                self._copy()
-        elif key == Qt.Key_V:
-            if modifiers == Qt.ControlModifier:
-                self._paste()
 
     def _copy(self):
         '''
