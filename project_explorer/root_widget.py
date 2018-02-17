@@ -570,12 +570,7 @@ class RootWidget(QFrame):
             deleted_item_path = path_utils.versioned_name(
                 trash_directory, deleted_item_name, at_end=True)
 
-            if os.path.isdir(path):
-                shutil.copytree(
-                    self._model.filePath(index), deleted_item_path)
-            elif os.path.isfile(path):
-                shutil.copy2(
-                    self._model.filePath(index), deleted_item_path)
+            shutil.move(self._model.filePath(index), deleted_item_path)
 
             self._model.remove(index)
 
