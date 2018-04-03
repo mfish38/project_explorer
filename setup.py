@@ -24,5 +24,10 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     test_suite='nose.collector',
-    tests_require=['nose']
+    tests_require=['nose'],
+    entry_points={
+        'gui_scripts': [
+            'project_explorer = project_explorer.__main__:main',
+        ],
+    }
 )
