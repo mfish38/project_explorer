@@ -24,7 +24,7 @@ def main():
 
     # Create and show the main window.
     main_window = ProjectExplorer()
-    main_window.resize(500, 1000)
+    main_window.resize(400, 1000)
     main_window.show()
 
     # Enter the event loop.
