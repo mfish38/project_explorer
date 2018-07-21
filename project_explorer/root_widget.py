@@ -291,6 +291,7 @@ class RootWidget(QFrame):
                 self._view.event(event)
                 return True
                 
+        return False
         
     def _context_menu(self, point):
         '''
@@ -607,7 +608,16 @@ class RootWidget(QFrame):
                 subprocess.Popen(expanded_command, shell=True)
                 break
         else:
-            os.startfile(path)
+            # Open the file with the OS settings.
+            try:
+                os.startfile(path)
+            except:
+                # Prevent application crash if windows errors out.
+                QMessageBox.critical(
+                    self,
+                    'Error',
+                    'Unable to open file. Check windows file association settings.'
+                )
 
     def _set_root_path(self, path):
         '''
