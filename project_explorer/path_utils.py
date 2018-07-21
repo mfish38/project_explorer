@@ -30,30 +30,74 @@ def versioned_name(dirname, basename, at_end=False):
         followed by a number at the end of the path (immediately before the extension if there is
         one).
     '''
-    versioned_name = os.path.join(dirname, basename)
-    if not os.path.exists(versioned_name):
-        return versioned_name
+    generated_name = os.path.join(dirname, basename)
+    if not os.path.exists(generated_name):
+        return generated_name
 
     # Get a free version suffix.
     name, extension = os.path.splitext(basename)
     counter = 0
     while True:
         if not at_end:
-            versioned_name = os.path.join(dirname, '{}_{}{}'.format(name, counter, extension))
+            generated_name = os.path.join(dirname, '{}_{}{}'.format(name, counter, extension))
         else:
-            versioned_name = os.path.join(dirname, '{}_{}'.format(basename, counter))
+            generated_name = os.path.join(dirname, '{}_{}'.format(basename, counter))
 
-        if not os.path.exists(versioned_name):
+        if not os.path.exists(generated_name):
             break
 
         counter += 1
 
-    return versioned_name
+    return generated_name
 
-def valid_split(path):
+def isdir(path, ignore=None):
+    '''
+    Same as os.path.isdir, except returns false if the path is in the ignore set.
+
+    Parameters:
+        path
+            The path to check.
+
+        ignore
+            A regex_tools.FastListMatcher object of paths to ignore. These paths will be treated as
+            if they don't exist.
+    '''
+    if ignore is not None and ignore.fullmatch(path):
+        return False
+
+    return os.path.isdir(path)
+
+def listdir(path, ignore=None):
+    '''
+    Same as os.listdir, except paths in the ignore set are filtered out.
+
+    Parameters:
+        path
+            The directory to list
+
+        ignore
+            A regex_tools.FastListMatcher object of paths to ignore. These paths will be treated as
+            if they don't exist.
+    '''
+    paths = os.listdir(path)
+
+    if ignore is not None:
+        paths = [item for item in paths if not ignore.fullmatch(item)]
+
+    return paths
+
+def valid_split(path, ignore=None):
     '''
     Splits the given path into a head and basename like os.path.split(), except that if the head is
     not a valid path, then head is repeatedly split into a new head and basename until it is.
+
+    Parameters:
+        path
+            The path to split
+
+        ignore
+            A regex_tools.FastListMatcher object of paths to ignore. These paths will be treated as
+            if they don't exist.
 
     Returns:
         (head, tail)
@@ -74,7 +118,7 @@ def valid_split(path):
             break
 
         # Check if a valid head has been found.
-        if os.path.isdir(head + os.sep):
+        if isdir(head + os.sep, ignore=ignore):
             break
 
     return head, basename
@@ -103,7 +147,7 @@ def normalize_path(path, separator='/'):
     else:
         raise Exception('Invalid path separator.')
 
-def complete_path(path):
+def complete_path(path, ignore=None):
     '''
     Completes the given path.
 
@@ -124,27 +168,31 @@ def complete_path(path):
         - path
             The path to complete.
 
+        - ignore
+            A regex_tools.FastListMatcher object of paths to ignore. These paths will be treated as
+            if they don't exist.
+
     Returns:
         A list containing paths (not ending in path separators).
     '''
     # Complete drive letters
     if len(path) == 1:
         path += ':'
-        if os.path.isdir(path):
+        if isdir(path, ignore=ignore):
             return [path]
         else:
             return []
     elif len(path) == 2 and path[1] == ':':
-        if os.path.isdir(path):
+        if isdir(path, ignore=ignore):
             return [path]
         else:
             return []
-    elif path.endswith(('/', '\\')) and os.path.isdir(path):
+    elif path.endswith(('/', '\\')) and isdir(path, ignore=ignore):
         return [path]
 
     # After this point try to complete where the basename is valid, but the tail isn't.
 
-    head, tail = valid_split(path)
+    head, tail = valid_split(path, ignore=ignore)
 
     # If there is no valid head, then we can't do anything.
     if head == '':
@@ -153,7 +201,7 @@ def complete_path(path):
     # Filter to the ones that the current tail is a prefix to, and convert to full paths.
     possibilities = [
         os.path.join(head, name)
-        for name in os.listdir(head)
+        for name in listdir(head, ignore=ignore)
         if name.lower().startswith(tail.lower())
     ]
 

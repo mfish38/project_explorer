@@ -40,6 +40,7 @@ from qtpy.QtWidgets import (
 )
 
 from . import path_utils
+from . import regex_tools
 from .json_file_icon_provider import JSONFileIconProvider
 from .path_edit import PathEdit
 
@@ -52,16 +53,16 @@ class FileSystemProxyModel(QSortFilterProxyModel):
 
         self.setDynamicSortFilter(True)
 
-        self._regex_filters = []
+        self._regex_filters = None
 
     def set_regex_filters(self, filters):
         '''
-        Sets the model to filter out files with the given extension.
+        Sets the model to filter out files.
 
         filters:
-            A list of regular expressions to filter out. Empty list to stop filtering.
+            A FastListMatcher that matches the file paths to hide. None to disable.
         '''
-        self._regex_filters = [re.compile(filter) for filter in filters]
+        self._regex_filters = filters
 
         self.invalidateFilter()
 
@@ -78,9 +79,12 @@ class FileSystemProxyModel(QSortFilterProxyModel):
         # Filter out junctions as QFileSystemModel does not work well with them.
         if ntfsutils.junction.isjunction(path):
             return False
-        
+
         # Apply regex filtering.
-        return not any((filter.fullmatch(path) for filter in self._regex_filters))
+        if self._regex_filters is not None:
+            return not self._regex_filters.fullmatch(path)
+
+        return True
 
     def isDir(self, index):
         '''
@@ -209,7 +213,7 @@ class RootWidget(QFrame):
 
         self._view.setFocusProxy(self._root_edit)
         self._root_edit.installEventFilter(self)
-        
+
         # --- setup the tool bar ---
         tool_bar = QToolBar()
 
@@ -252,13 +256,13 @@ class RootWidget(QFrame):
         self._settings = None
         self.update_settings(settings)
 
-    def eventFilter(self, object, event):
+    def eventFilter(self, object_, event):
         if event.type() != QEvent.KeyPress:
             return False
-            
+
         key = event.key()
         modifiers = QApplication.keyboardModifiers()
-    
+
         if object is self._root_edit:
             if key == Qt.Key_Delete:
                 if modifiers == Qt.ShiftModifier:
@@ -290,9 +294,9 @@ class RootWidget(QFrame):
             }:
                 self._view.event(event)
                 return True
-                
+
         return False
-        
+
     def _context_menu(self, point):
         '''
         Opens a context menu generated from the user settings.
@@ -337,16 +341,16 @@ class RootWidget(QFrame):
             enabled = True
             if highest_field_number is not None and len(selected_items) != highest_field_number + 1:
                 enabled = False
-            
+
             # Disable the menu item if the command uses {selected}, but there is nothing selected.
             if enabled and 'selected' in field_names and len(selected_items) == 0:
                 enabled = False
-                
+
             # Disable the menu item if the command uses {current_directory}, but there is no
             # current directory.
             if enabled and 'current_directory' in field_names and current_directory is None:
                 enabled = False
-                
+
             # Disable the menu item if any of the selected items don't match at least one of the
             # given regex patterns. Note that if this is specified at least one item must be
             # selected.
@@ -359,8 +363,8 @@ class RootWidget(QFrame):
                     for path in selected_items:
                         if not any((re.fullmatch(filter, path) for filter in require_filters)):
                             enabled = False
-                            break     
-                        
+                            break
+
             # Disable the menu item if any of the selected items matches any of the given regex
             # patterns
             if enabled and 'exclude' in menu_item_setting:
@@ -370,7 +374,7 @@ class RootWidget(QFrame):
                     if any((re.fullmatch(filter, path) for filter in exclude_filters)):
                         enabled = False
                         break
-                            
+
             if not enabled:
                 # Only create a menu item if it is not hidden.
                 if menu_item_setting.get('show_if_disabled', False):
@@ -409,7 +413,14 @@ class RootWidget(QFrame):
         '''
         self._settings = new_settings
 
-        self._model.set_regex_filters(new_settings['regex_filters'])
+        # Setup file hiding regex filters.
+        regex_filters = new_settings.get('regex_filters', [])
+        if regex_filters == []:
+            regex_filters = None
+        else:
+            regex_filters = regex_tools.FastListMatcher(new_settings['regex_filters'])
+        self._root_edit.set_regex_filters(regex_filters)
+        self._model.set_regex_filters(regex_filters)
 
     def _copy(self):
         '''
@@ -420,7 +431,7 @@ class RootWidget(QFrame):
             self._root_edit.copy()
             self._root_edit.deselect()
             return
-        
+
         # Copy the urls of the selected files to the clipboard.
         filePath = self._model.filePath
         urls = [QUrl.fromLocalFile(filePath(index)) for index in self._view.selectedIndexes()]
@@ -440,7 +451,7 @@ class RootWidget(QFrame):
         mime_data = clipboard.mimeData()
 
         destination_directory = self.current_directory()
-        
+
         if mime_data.hasUrls():
             # If the clipboard contains urls, copy from the sources.
             paths = [url.toLocalFile() for url in mime_data.urls() if url.isLocalFile()]
@@ -588,7 +599,7 @@ class RootWidget(QFrame):
                 # Send a request for opening a new root.
                 self.open_request.emit(self._model.filePath(index))
                 return
-            
+
             # Change the root directory.
             self._move_root_index(index)
             path = self._model.filePath(self._view.rootIndex())
@@ -601,7 +612,7 @@ class RootWidget(QFrame):
         Opens the file with the associated model index.
         '''
         path = self._model.filePath(index)
-        
+
         for pattern, command in self._settings['open_with']:
             if re.fullmatch(pattern, path):
                 expanded_command = command.format(path='"{}"'.format(path))

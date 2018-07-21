@@ -31,8 +31,18 @@ class PathEdit(QLineEdit):
 
         self._tab_suggestions = None
         self._previous_text = None
+        self._regex_filters = None
 
         self.textEdited.connect(self._handle_edit)
+
+    def set_regex_filters(self, filters):
+        '''
+        Sets the path completion to filter out paths.
+
+        filters:
+            A FastListMatcher that matches the file paths to ignore. None to disable.
+        '''
+        self._regex_filters = filters
 
     def _tab_complete(self):
         '''
@@ -41,7 +51,7 @@ class PathEdit(QLineEdit):
         text = self.text()
 
         if self._tab_suggestions is None:
-            possibilities = path_utils.complete_path(text)
+            possibilities = path_utils.complete_path(text, self._regex_filters)
 
             # Normalize the possibilities and filter to directories.
             possibilities = [
@@ -115,7 +125,7 @@ class PathEdit(QLineEdit):
             self.new_path.emit(path)
             return
 
-        possibilities = path_utils.complete_path(text)
+        possibilities = path_utils.complete_path(text, self._regex_filters)
 
         # Normalize the possibilities and filter to directories.
         possibilities = [
