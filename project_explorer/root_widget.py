@@ -355,23 +355,23 @@ class RootWidget(QFrame):
             # given regex patterns. Note that if this is specified at least one item must be
             # selected.
             if enabled and 'require' in menu_item_setting:
-                require_filters = menu_item_setting['require']
+                require_filters = regex_tools.FastListMatcher(menu_item_setting['require'])
 
-                if len(selected_items) == 0:
+                if not selected_items:
                     enabled = False
                 else:
                     for path in selected_items:
-                        if not any((re.fullmatch(filter, path) for filter in require_filters)):
+                        if not require_filters.fullmatch(path):
                             enabled = False
                             break
 
             # Disable the menu item if any of the selected items matches any of the given regex
             # patterns
             if enabled and 'exclude' in menu_item_setting:
-                exclude_filters = menu_item_setting['exclude']
+                exclude_filters = regex_tools.FastListMatcher(menu_item_setting['exclude'])
 
                 for path in selected_items:
-                    if any((re.fullmatch(filter, path) for filter in exclude_filters)):
+                    if exclude_filters.fullmatch(path):
                         enabled = False
                         break
 
