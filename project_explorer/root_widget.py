@@ -253,43 +253,44 @@ class RootWidget(QFrame):
         self.update_settings(settings)
 
     def eventFilter(self, object, event):
-        if event.type() == QEvent.KeyPress:
-            key = event.key()
-            modifiers = QApplication.keyboardModifiers()
-        
-            if object is self._root_edit:
-                if key == Qt.Key_Delete:
-                    if modifiers == Qt.ShiftModifier:
-                        self._delete_selected()
-                        return True
-                    elif modifiers == Qt.NoModifier:
-                        self._trash_selected()
-                        return True
-                # TODO:
-                # elif key == Qt.Key_X:
-                    # if modifiers == Qt.ControlModifier:
-                        # self._cut()
-                elif key == Qt.Key_C:
-                    if modifiers == Qt.ControlModifier:
-                        self._copy()
-                        return True
-                elif key == Qt.Key_V:
-                    if modifiers == Qt.ControlModifier:
-                        self._paste()
-                        return True
-                # Send navigation key presses to the tree view.
-                elif key in {
-                    Qt.Key_Up,
-                    Qt.Key_Down,
-                    Qt.Key_Left,
-                    Qt.Key_Right,
-                    Qt.Key_Enter,
-                    Qt.Key_Return,
-                }:
-                    self._view.event(event)
+        if event.type() != QEvent.KeyPress:
+            return False
+            
+        key = event.key()
+        modifiers = QApplication.keyboardModifiers()
+    
+        if object is self._root_edit:
+            if key == Qt.Key_Delete:
+                if modifiers == Qt.ShiftModifier:
+                    self._delete_selected()
                     return True
+                elif modifiers == Qt.NoModifier:
+                    self._trash_selected()
+                    return True
+            # TODO:
+            # elif key == Qt.Key_X:
+                # if modifiers == Qt.ControlModifier:
+                    # self._cut()
+            elif key == Qt.Key_C:
+                if modifiers == Qt.ControlModifier:
+                    self._copy()
+                    return True
+            elif key == Qt.Key_V:
+                if modifiers == Qt.ControlModifier:
+                    self._paste()
+                    return True
+            # Send navigation key presses to the tree view.
+            elif key in {
+                Qt.Key_Up,
+                Qt.Key_Down,
+                Qt.Key_Left,
+                Qt.Key_Right,
+                Qt.Key_Enter,
+                Qt.Key_Return,
+            }:
+                self._view.event(event)
+                return True
                 
-        return False
         
     def _context_menu(self, point):
         '''
