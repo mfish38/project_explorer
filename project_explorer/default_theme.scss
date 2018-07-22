@@ -74,7 +74,9 @@ ExtendedTabBar {
 ExtendedTabBar QTabBar::tab {
     border: 2px solid $tab_tray_color;
     border-left: none;
-    padding: 5px;
+    padding-left: 5px;
+    padding-right: 4px;
+    padding-top: 6px;
     background: $tab_inactive_color;
 }
 
