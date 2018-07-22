@@ -26,7 +26,8 @@ class FastListMatcher:
         ## flags
             Flags for re.compile.
         '''
-        expression = f'({"|".join(expressions)})'
+        expressions = [f'(?:{expression})' for expression in expressions]
+        expression = f'(?:{"|".join(expressions)})'
 
         self._regex = re.compile(expression, flags=flags)
 
