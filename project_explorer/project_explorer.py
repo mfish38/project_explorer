@@ -8,8 +8,13 @@ A project based file explorer.
 import os
 import json
 import shutil
+import sys
 
 import scss
+
+from qtpy.QtGui import (
+    QFont
+)
 
 from qtpy.QtCore import (
     Signal,
@@ -367,7 +372,19 @@ class ProjectExplorer(QFrame):
         if len(self._settings_watcher.files()) == 0:
             self._settings_watcher.addPath(SETTINGS_PATH)
 
-        self._settings = extended_json.load_file(SETTINGS_PATH)
+        try:
+            self._settings = extended_json.load_file(SETTINGS_PATH)
+        except extended_json.JSONSyntaxError as error:
+            message_box = QMessageBox(
+                QMessageBox.Critical,
+                'Error',
+                f'{error.msg}\n{error.context()}'
+            )
+            message_box.setFont(QFont('Consolas'))
+            message_box.exec()
+
+            if self._settings is None:
+                sys.exit()
 
         self._apply_theme_settings()
 
