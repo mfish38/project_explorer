@@ -253,7 +253,7 @@ class RootWidget(QFrame):
         self._settings = None
         self.update_settings(settings)
 
-    def keyPressEvent(self, object_, event):
+    def keyPressEvent(self, event):
         key = event.key()
         modifiers = QApplication.keyboardModifiers()
 
