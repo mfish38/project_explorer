@@ -211,9 +211,6 @@ class RootWidget(QFrame):
         self._root_edit = PathEdit()
         self._root_edit.new_path.connect(self._set_root_path)
 
-        self._view.setFocusProxy(self._root_edit)
-        self._root_edit.installEventFilter(self)
-
         # --- setup the tool bar ---
         tool_bar = QToolBar()
 
@@ -256,46 +253,25 @@ class RootWidget(QFrame):
         self._settings = None
         self.update_settings(settings)
 
-    def eventFilter(self, object_, event):
-        if event.type() != QEvent.KeyPress:
-            return False
-
+    def keyPressEvent(self, object_, event):
         key = event.key()
         modifiers = QApplication.keyboardModifiers()
 
-        if object is self._root_edit:
-            if key == Qt.Key_Delete:
-                if modifiers == Qt.ShiftModifier:
-                    self._delete_selected()
-                    return True
-                elif modifiers == Qt.NoModifier:
-                    self._trash_selected()
-                    return True
-            # TODO:
-            # elif key == Qt.Key_X:
-                # if modifiers == Qt.ControlModifier:
-                    # self._cut()
-            elif key == Qt.Key_C:
-                if modifiers == Qt.ControlModifier:
-                    self._copy()
-                    return True
-            elif key == Qt.Key_V:
-                if modifiers == Qt.ControlModifier:
-                    self._paste()
-                    return True
-            # Send navigation key presses to the tree view.
-            elif key in {
-                Qt.Key_Up,
-                Qt.Key_Down,
-                Qt.Key_Left,
-                Qt.Key_Right,
-                Qt.Key_Enter,
-                Qt.Key_Return,
-            }:
-                self._view.event(event)
-                return True
-
-        return False
+        if key == Qt.Key_Delete:
+            if modifiers == Qt.ShiftModifier:
+                self._delete_selected()
+            elif modifiers == Qt.NoModifier:
+                self._trash_selected()
+        # TODO:
+        # elif key == Qt.Key_X:
+            # if modifiers == Qt.ControlModifier:
+                # self._cut()
+        elif key == Qt.Key_C:
+            if modifiers == Qt.ControlModifier:
+                self._copy()
+        elif key == Qt.Key_V:
+            if modifiers == Qt.ControlModifier:
+                self._paste()
 
     def _context_menu(self, point):
         '''
@@ -426,12 +402,6 @@ class RootWidget(QFrame):
         '''
         Copies all of the selected items to the clipboard.
         '''
-        # Copy selected text edit if there is any.
-        if self._root_edit.selectedText():
-            self._root_edit.copy()
-            self._root_edit.deselect()
-            return
-
         # Copy the urls of the selected files to the clipboard.
         filePath = self._model.filePath
         urls = [QUrl.fromLocalFile(filePath(index)) for index in self._view.selectedIndexes()]
