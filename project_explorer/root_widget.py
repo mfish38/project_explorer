@@ -13,6 +13,7 @@ import datetime
 import shutil
 import string
 import subprocess
+from pathlib import Path
 
 import ntfsutils.junction
 
@@ -43,6 +44,21 @@ from . import path_utils
 from . import regex_tools
 from .json_file_icon_provider import JSONFileIconProvider
 from .path_edit import PathEdit
+
+class ChDir:
+    '''
+    Context manager for changing the current working directory and restoring it.
+    '''
+    def __init__(self, path):
+        self.path = path
+        self.previous_path = None
+        
+    def __enter__(self):
+        self.previous_path = os.getcwd()
+        os.chdir(self.path)
+        
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        os.chdir(self.previous_path)
 
 class FileSystemProxyModel(QSortFilterProxyModel):
     '''
@@ -591,7 +607,8 @@ class RootWidget(QFrame):
         else:
             # Open the file with the OS settings.
             try:
-                os.startfile(path)
+                with ChDir(Path(path).parent):
+                    os.startfile(path)
             except:
                 # Prevent application crash if windows errors out.
                 QMessageBox.critical(
